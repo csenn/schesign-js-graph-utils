@@ -139,6 +139,18 @@ export function validateRange (range) {
       if (!range.values) {
         return `Bad Enum range: ${range.values}`
       }
+      break
+    case NESTED_OBJECT:
+      if (!range.propertyRefs) {
+        return 'Bad NestedObject Range, propertyRefs required'
+      }
+      for (const ref of range.propertyRefs) {
+        const error = validateCardinality(ref.cardinality)
+        if (error) {
+          return error
+        }
+      }
+      break
     default:
       return `Bad range type: ${range.type}`
   }

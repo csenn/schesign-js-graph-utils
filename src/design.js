@@ -1,11 +1,33 @@
 import {
   validateRange,
-  validateCardinality
+  validateCardinality,
+  NESTED_OBJECT
 } from './index'
 
-export class PropertyNode {
-  constructor (opts) {
-    this.type = 'Property'
+function getPropertyRef (property, cardinality) {
+  /* Use either the uid or label */
+  const ref = property.uid || property.label
+  const propertyRef = { ref }
+
+  if (cardinality) {
+    const err = validateCardinality(opts.cardinality)
+    if (err) {
+      throw new Error(`Cardinality error for property ref ${ref}: ${err}`)
+    }
+    propertyRef.cardinality = opts.cardinality
+  } else {
+    propertyRef.cardinality = {
+      minItems: 0,
+      maxItems: 1
+    }
+  }
+
+  return propertyRef
+}
+
+export class Node {
+  constructor (type, opts) {
+    this.type = type
 
     if (!opts.label) {
       throw new Error ('option: label is required')
@@ -15,21 +37,52 @@ export class PropertyNode {
     if (opts.description) {
       this.description = opts.description
     }
+  }
 
-    if (opts.range) {
-      this.setRange(opts.range)
-    } else {
-      this.range = {}
+}
+
+export class PropertyNode extends Node {
+  constructor (opts) {
+    super('Property', opts)
+
+    if (!opts.range) {
+      throw new Error ('option: range is required')
     }
+    this.setRange(opts.range)
+    this.propertyLookup = {}
   }
 
   setRange (range) {
-    const err = validateRange (range)
+    const nextRange = range && range.type === NESTED_OBJECT
+      ? Object.assign({}, range, { propertyRefs: [] })
+      : range
+
+    const err = validateRange(nextRange)
     if (err) {
       throw new Error(`Range error for property ${this.label}: ${err}`)
     }
-    this.range = range
+    this.range = nextRange
   }
+
+  addPropertyRef (property, opts) {
+    if (this.range.type !== NESTED_OBJECT) {
+      throw new Error('Must have range NestedObject to add property ref')
+    }
+
+    if (!(property instanceof PropertyNode)) {
+      throw new Error('Must be an instanceof PropertyNode');
+    }
+
+    const propertyRef = getPropertyRef(property, opts && opts.cardinality)
+    const { ref } = propertyRef
+    if (this.propertyLookup[ref]) {
+      throw new Error (`Property has already been added to NestedObject: ${this.label}`)
+    }
+    this.propertyLookup[ref] = property
+
+    this.range.propertyRefs.push(propertyRef)
+  }
+
 
   toJSON() {
     return {
@@ -41,18 +94,9 @@ export class PropertyNode {
   }
 }
 
-export class ClassNode {
+export class ClassNode extends Node {
   constructor (opts) {
-    this.type = 'Class'
-
-    if (!opts.label) {
-      throw new Error ('option: label is required')
-    }
-    this.label = opts.label
-
-    if (opts.description) {
-      this.description = opts.description
-    }
+    super('Class', opts)
 
     if (opts.subClassOf) {
       this.subClassOf = opts.subClassOf
@@ -67,28 +111,12 @@ export class ClassNode {
       throw new Error('Must be an instanceof PropertyNode');
     }
 
-    /* Use either the uid or label */
-    const ref = property.uid || property.label
-
+    const propertyRef = getPropertyRef(property, opts && opts.cardinality)
+    const { ref } = propertyRef
     if (this.propertyLookup[ref]) {
       throw new Error ('Property has already been added to class')
     }
     this.propertyLookup[ref] = property
-
-    const propertyRef = { ref }
-
-    if (opts && opts.cardinality) {
-      const err = validateCardinality(opts.cardinality)
-      if (err) {
-        throw new Error(`Cardinality error for property ref ${ref}: ${err}`)
-      }
-      propertyRef.cardinality = opts.cardinality
-    } else {
-      propertyRef.cardinality = {
-        minItems: 0,
-        maxItems: 1
-      }
-    }
 
     this.propertyRefs.push(propertyRef)
   }

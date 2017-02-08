@@ -11,13 +11,6 @@ const { describe, it } = global;
 describe('Generating a design', () => {
   let design = new Design()
   describe('and creating properties', () => {
-    it ('should create a property node', () => {
-      const node = new PropertyNode({
-        label: 'a'
-      })
-      expect(node.label).to.equal('a')
-      expect(node.range).to.deep.equal({})
-    })
     it ('should create a property node with range text', () => {
       const node = new PropertyNode({
         label: 'a',
@@ -25,6 +18,37 @@ describe('Generating a design', () => {
       })
       expect(node.label).to.equal('a')
       expect(node.range.type).to.equal(constants.TEXT)
+    })
+    it ('should fail to create a NestedObject property node', () => {
+      const node = new PropertyNode({
+        label: 'a',
+        range: { type: constants.TEXT }
+      })
+      const nodeB = new PropertyNode({
+        label: 'b',
+        range: { type: constants.TEXT }
+      })
+      try {
+        node.addPropertyRef(nodeB)
+      } catch (err) {
+        expect(err).to.eql(new Error('Must have range NestedObject to add property ref'));
+      }
+    })
+    it ('should create a NestedObject property node', () => {
+      const node = new PropertyNode({
+        label: 'a',
+        range: { type: constants.NESTED_OBJECT }
+      })
+      const nodeB = new PropertyNode({
+        label: 'b',
+        range: { type: constants.TEXT }
+      })
+      node.addPropertyRef(nodeB)
+      expect(node.label).to.equal('a')
+      expect(node.range).to.deep.equal({
+        type: constants.NESTED_OBJECT,
+        propertyRefs: [{ ref: nodeB.label, cardinality: { minItems: 0, maxItems: 1} }]
+      })
     })
   })
   describe('and creating classes', () => {
@@ -44,7 +68,7 @@ describe('Generating a design', () => {
     })
     it ('should add an propertyRef by reference to a class node', () => {
       const node = new ClassNode({ label: 'classA' })
-      const propNode = new PropertyNode({ label: 'a' })
+      const propNode = new PropertyNode({ label: 'a', range: {type: constants.TEXT} })
       node.addPropertyRef(propNode)
       expect(node.propertyRefs.length).to.equal(1)
       expect(node.propertyRefs[0].ref).to.equal('a')
@@ -61,16 +85,17 @@ describe('Generating a design', () => {
       const propA = new PropertyNode({ label: 'a', range: { type: constants.TEXT } })
       const propB = new PropertyNode({ label: 'b', range: { type: constants.TEXT } })
       const propC = new PropertyNode({ label: 'c', range: { type: constants.TEXT } })
+      const propD = new PropertyNode({ label: 'd', range: { type: constants.NESTED_OBJECT } })
+      propD.addPropertyRef(propA)
       classA.addPropertyRef(propA)
       classA.addPropertyRef(propB)
       classB.addPropertyRef(propC)
       classB.addPropertyRef(propB)
+      classB.addPropertyRef(propD)
       design.addClassNode(classA)
       design.addClassNode(classB)
 
       const result = design.toJSON()
-
-      console.log(JSON.stringify(result, null, 4))
 
       expect(result).to.deep.equal({
         graph: [
@@ -91,7 +116,8 @@ describe('Generating a design', () => {
             description: null,
             propertyRefs: [
               { ref: 'c', cardinality: { minItems: 0, maxItems: 1} },
-              { ref: 'b', cardinality: { minItems: 0, maxItems: 1} }
+              { ref: 'b', cardinality: { minItems: 0, maxItems: 1} },
+              { ref: 'd', cardinality: { minItems: 0, maxItems: 1} }
             ]
           },
           {
@@ -116,6 +142,17 @@ describe('Generating a design', () => {
             description: null,
             range: {
               type: 'Text'
+            }
+          },
+          {
+            label: 'd',
+            type: 'Property',
+            description: null,
+            range: {
+              type: 'NestedObject',
+              propertyRefs: [
+                { ref: 'a', cardinality: { minItems: 0, maxItems: 1} },
+              ]
             }
           }
         ]
