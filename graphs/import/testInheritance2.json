@@ -1,0 +1,30 @@
+{
+  "graph": [
+    {
+      "type": "Class",
+      "label": "class4",
+      "subClassOf": "https://www.schesign.com/u/csenn/test_inheritance_1/master/class/class3",
+      "propertyRefs": [
+        { "ref": "d",  "cardinality": { "minItems": 0, "maxItems": 1 } }
+      ]
+    },
+    {
+      "type": "Class",
+      "label": "class5",
+      "subClassOf": "class4",
+      "propertyRefs": [
+        { "ref": "e", "cardinality": { "minItems": 0, "maxItems": 1 } }
+      ]
+    },
+    {
+      "type": "Property",
+      "label": "d",
+      "range": { "type": "Text" }
+    },
+   {
+     "type": "Property",
+      "label": "e",
+      "range": { "type": "Text" }
+    }
+  ]
+}

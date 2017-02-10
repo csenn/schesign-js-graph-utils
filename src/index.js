@@ -1,4 +1,4 @@
-import { isNumber, isArray } from 'lodash'
+import { isNumber, isArray } from 'lodash';
 
 /* Types other then primitives */
 export const LINKED_CLASS = 'LinkedClass';
@@ -26,8 +26,8 @@ export const NUMBER_INT_16 = 'Int16';
 export const NUMBER_INT_32 = 'Int32';
 export const NUMBER_INT_64 = 'Int64';
 
-export const NUMBER_FLOAT_32 = 'Float32'
-export const NUMBER_FLOAT_64 = 'Float64'
+export const NUMBER_FLOAT_32 = 'Float32';
+export const NUMBER_FLOAT_64 = 'Float64';
 
 /* Create a uid */
 export function createUid(options) {
@@ -69,18 +69,18 @@ export function createUid(options) {
 }
 
 /* Cardinality helpers */
-export function validateCardinality (cardinality) {
-  const err = 'Bad Cardinality. Must be in format {minItems: [num], maxItems: [num || null]}'
+export function validateCardinality(cardinality) {
+  const err = 'Bad Cardinality. Must be in format {minItems: [num], maxItems: [num || null]}';
   if (!cardinality) {
-    return err
+    return err;
   } else if (Object.keys(cardinality).length > 2) {
-    return err
+    return err;
   } else if (!isNumber(cardinality.minItems)) {
-    return err
+    return err;
   } else if (cardinality.maxItems !== null && !isNumber(cardinality.maxItems)) {
-    return err
+    return err;
   }
-  return null
+  return null;
 }
 
 export function isRequiredCardinality(cardinality) {
@@ -95,8 +95,8 @@ export function isMultipleCardinality(cardinality) {
 const textFormats = [
   TEXT_URL,
   TEXT_EMAIL,
-  TEXT_HOSTNAME
-]
+  TEXT_HOSTNAME,
+];
 
 const numberFormats = [
   NUMBER_INT,
@@ -105,58 +105,58 @@ const numberFormats = [
   NUMBER_INT_32,
   NUMBER_INT_64,
   NUMBER_FLOAT_32,
-  NUMBER_FLOAT_64
-]
+  NUMBER_FLOAT_64,
+];
 
 const dateFormats = [
   DATE_SHORT,
   DATE_DATETIME,
-  DATE_TIME
-]
+  DATE_TIME,
+];
 
 /* Return an error message if there is an error */
-export function validateRange (range) {
+export function validateRange(range) {
   switch (range.type) {
     case BOOLEAN:
-      break
+      break;
     case TEXT:
       if (range.format && !textFormats.includes(range.format)) {
-        return `Bad Text format for range.format: ${range.format}`
+        return `Bad Text format for range.format: ${range.format}`;
       }
-      break
+      break;
     case NUMBER:
       if (range.format && !numberFormats.includes(range.format)) {
-        return `Bad Number format with range.format: ${range.format}`
+        return `Bad Number format with range.format: ${range.format}`;
       }
-      break
+      break;
     case DATE:
       if (range.format && !dateFormats.includes(range.format)) {
-        return `Bad Date format with range.format: ${range.format}`
+        return `Bad Date format with range.format: ${range.format}`;
       }
-      break
+      break;
     case ENUM:
       if (!isArray(range.values)) {
-        return `Bad Enum range: ${range.values}`
+        return `Bad Enum range: ${range.values}`;
       }
-      break
+      break;
     case NESTED_OBJECT:
       if (!isArray(range.propertyRefs)) {
-        return 'Bad NestedObject Range, propertyRefs required'
+        return 'Bad NestedObject Range, propertyRefs required';
       }
       for (const ref of range.propertyRefs) {
-        const error = validateCardinality(ref.cardinality)
+        const error = validateCardinality(ref.cardinality);
         if (error) {
-          return error
+          return error;
         }
       }
-      break
+      break;
     case LINKED_CLASS:
       if (!range.ref) {
-        return 'Bad LinkedClass range, ref required'
+        return 'Bad LinkedClass range, ref required';
       }
-      break
+      break;
     default:
-      return `Bad range type: ${range.type}`
+      return `Bad range type: ${range.type}`;
   }
-  return null
+  return null;
 }

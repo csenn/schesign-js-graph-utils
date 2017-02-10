@@ -8,3 +8,7 @@ This library converts this graph into JSON schema.
 ```
 npm install schesign-js-graph-utils --save
 ```
+
+
+Notes
+* make sure class cant be added more then once
