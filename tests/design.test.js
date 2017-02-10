@@ -60,14 +60,14 @@ describe('Generating a design', () => {
     it('should throw when a class is not provided', () => {
       const d = new Design();
       try {
-        d.addClassNode({});
+        d.addClass({});
       } catch (err) {
         expect(err).to.eql(new Error('Must be an instanceof ClassNode'));
       }
     });
     it('should add an empty class node', () => {
       const node = new ClassNode({ label: 'classA' });
-      design.addClassNode(node);
+      design.addClass(node);
       expect(node.label).to.equal('classA');
       expect(design.graph.length).to.equal(1);
     });
@@ -153,8 +153,8 @@ describe('Generating a design', () => {
 
       class2.addProperty(propY);
 
-      design.addClassNode(class1);
-      design.addClassNode(class2);
+      design.addClass(class1);
+      design.addClass(class2);
 
       const result = design.toJSON();
       expect(result).to.deep.equal(propertyVariations);
@@ -180,9 +180,9 @@ describe('Generating a design', () => {
 
       class2.excludeParentProperty(propA1)
 
-      design.addClassNode(class1)
-      design.addClassNode(class2)
-      design.addClassNode(class3)
+      design.addClass(class1)
+      design.addClass(class2)
+      design.addClass(class3)
 
 
       const result = design.toJSON()
@@ -201,8 +201,8 @@ describe('Generating a design', () => {
       class4.inheritsFrom('https://www.schesign.com/u/csenn/test_inheritance_1/master/class/class3')
       class5.inheritsFrom(class4)
 
-      design.addClassNode(class4)
-      design.addClassNode(class5)
+      design.addClass(class4)
+      design.addClass(class5)
 
       const result = design.toJSON()
       expect(result).to.deep.equal(testInheritance2)

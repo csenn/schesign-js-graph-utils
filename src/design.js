@@ -177,7 +177,7 @@ export class Design {
     this.graph = [];
   }
 
-  addClassNode(node) {
+  addClass(node) {
     if (!(node instanceof ClassNode)) {
       throw new Error('Must be an instanceof ClassNode');
     }
