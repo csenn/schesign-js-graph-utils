@@ -1,3 +1,4 @@
+import { isNumber, isArray } from 'lodash'
 
 /* Types other then primitives */
 export const LINKED_CLASS = 'LinkedClass';
@@ -11,9 +12,9 @@ export const DATE = 'Date';
 export const ENUM = 'Enum';
 
 /* Primitive Formats */
-export const TEXT_FORMAT_URL = 'Url';
-export const TEXT_FORMAT_EMAIL = 'Email';
-export const TEXT_FORMAT_HOSTNAME = 'Hostname';
+export const TEXT_URL = 'Url';
+export const TEXT_EMAIL = 'Email';
+export const TEXT_HOSTNAME = 'Hostname';
 
 export const DATE_SHORT = 'ShortDate';
 export const DATE_DATETIME = 'DateTime';
@@ -27,11 +28,6 @@ export const NUMBER_INT_64 = 'Int64';
 
 export const NUMBER_FLOAT_32 = 'Float32'
 export const NUMBER_FLOAT_64 = 'Float64'
-
-/* Maybe use lodash... */
-function isNumber(n) {
-  return !isNaN(parseFloat(n)) && isFinite(n);
-}
 
 /* Create a uid */
 export function createUid(options) {
@@ -74,12 +70,15 @@ export function createUid(options) {
 
 /* Cardinality helpers */
 export function validateCardinality (cardinality) {
-  if (!cardinality
-    || !isNumber(cardinality.minItems)
-    || !isNumber(cardinality.maxItems)
-    || Object.keys(cardinality).length > 2)
-  {
-    return 'Bad Cardinality. Must be in format {minItems: [num], maxItems: [num]}'
+  const err = 'Bad Cardinality. Must be in format {minItems: [num], maxItems: [num || null]}'
+  if (!cardinality) {
+    return err
+  } else if (Object.keys(cardinality).length > 2) {
+    return err
+  } else if (!isNumber(cardinality.minItems)) {
+    return err
+  } else if (cardinality.maxItems !== null && !isNumber(cardinality.maxItems)) {
+    return err
   }
   return null
 }
@@ -94,9 +93,9 @@ export function isMultipleCardinality(cardinality) {
 
 /* Range Helpers */
 const textFormats = [
-  TEXT_FORMAT_URL,
-  TEXT_FORMAT_EMAIL,
-  TEXT_FORMAT_HOSTNAME
+  TEXT_URL,
+  TEXT_EMAIL,
+  TEXT_HOSTNAME
 ]
 
 const numberFormats = [
@@ -136,12 +135,12 @@ export function validateRange (range) {
       }
       break
     case ENUM:
-      if (!range.values) {
+      if (!isArray(range.values)) {
         return `Bad Enum range: ${range.values}`
       }
       break
     case NESTED_OBJECT:
-      if (!range.propertyRefs) {
+      if (!isArray(range.propertyRefs)) {
         return 'Bad NestedObject Range, propertyRefs required'
       }
       for (const ref of range.propertyRefs) {
@@ -149,6 +148,11 @@ export function validateRange (range) {
         if (error) {
           return error
         }
+      }
+      break
+    case LINKED_CLASS:
+      if (!range.ref) {
+        return 'Bad LinkedClass range, ref required'
       }
       break
     default:

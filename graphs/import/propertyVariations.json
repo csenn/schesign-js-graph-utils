@@ -1,0 +1,483 @@
+{
+  "graph": [
+    {
+      "type": "Class",
+      "label": "class1",
+      "description": "First Description",
+      "propertyRefs": [
+        {
+          "ref": "a",
+          "cardinality": {
+            "minItems": 0,
+            "maxItems": 1
+          }
+        },
+        {
+          "ref": "a1",
+          "cardinality": {
+            "minItems": 0,
+            "maxItems": 1
+          }
+        },
+        {
+          "ref": "b",
+          "cardinality": {
+            "minItems": 1,
+            "maxItems": 1
+          }
+        },
+        {
+          "ref": "c",
+          "cardinality": {
+            "minItems": 0,
+            "maxItems": null
+          }
+        },
+        {
+          "ref": "d",
+          "cardinality": {
+            "minItems": 0,
+            "maxItems": 1
+          }
+        },
+        {
+          "ref": "e",
+          "cardinality": {
+            "minItems": 0,
+            "maxItems": 1
+          }
+        },
+        {
+          "ref": "f",
+          "cardinality": {
+            "minItems": 0,
+            "maxItems": 1
+          }
+        },
+        {
+          "ref": "g",
+          "cardinality": {
+            "minItems": 0,
+            "maxItems": 1
+          }
+        },
+        {
+          "ref": "g1",
+          "cardinality": {
+            "minItems": 0,
+            "maxItems": 1
+          }
+        },
+        {
+          "ref": "g2",
+          "cardinality": {
+            "minItems": 0,
+            "maxItems": 1
+          }
+        },
+        {
+          "ref": "h",
+          "cardinality": {
+            "minItems": 0,
+            "maxItems": 1
+          }
+        },
+        {
+          "ref": "i",
+          "cardinality": {
+            "minItems": 0,
+            "maxItems": 1
+          }
+        },
+        {
+          "ref": "j",
+          "cardinality": {
+            "minItems": 0,
+            "maxItems": 1
+          }
+        },
+        {
+          "ref": "k",
+          "cardinality": {
+            "minItems": 0,
+            "maxItems": 1
+          }
+        },
+        {
+          "ref": "l",
+          "cardinality": {
+            "minItems": 0,
+            "maxItems": 1
+          }
+        },
+        {
+          "ref": "m",
+          "cardinality": {
+            "minItems": 0,
+            "maxItems": 1
+          }
+        },
+        {
+          "ref": "n",
+          "cardinality": {
+            "minItems": 0,
+            "maxItems": 1
+          }
+        },
+        {
+          "ref": "o",
+          "cardinality": {
+            "minItems": 0,
+            "maxItems": 1
+          }
+        },
+        {
+          "ref": "p",
+          "cardinality": {
+            "minItems": 0,
+            "maxItems": 1
+          }
+        },
+        {
+          "ref": "q",
+          "cardinality": {
+            "minItems": 0,
+            "maxItems": 1
+          }
+        },
+        {
+          "ref": "r",
+          "cardinality": {
+            "minItems": 0,
+            "maxItems": 1
+          }
+        },
+        {
+          "ref": "s",
+          "cardinality": {
+            "minItems": 0,
+            "maxItems": 1
+          }
+        },
+        {
+          "ref": "s1",
+          "cardinality": {
+            "minItems": 0,
+            "maxItems": 1
+          }
+        },
+        {
+          "ref": "s2",
+          "cardinality": {
+            "minItems": 0,
+            "maxItems": 1
+          }
+        },
+        {
+          "ref": "s3",
+          "cardinality": {
+            "minItems": 0,
+            "maxItems": 1
+          }
+        },
+        {
+          "ref": "t",
+          "cardinality": {
+            "minItems": 0,
+            "maxItems": 1
+          }
+        },
+        {
+          "ref": "x",
+          "cardinality": {
+            "minItems": 0,
+            "maxItems": 1
+          }
+        }
+      ]
+    },
+    {
+      "type": "Class",
+      "label": "class2",
+      "propertyRefs": [
+        {
+          "ref": "y",
+          "cardinality": {
+            "minItems": 0,
+            "maxItems": 1
+          }
+        }
+      ]
+    },
+    {
+      "type": "Property",
+      "label": "a",
+      "range": {
+        "type": "Boolean"
+      }
+    },
+    {
+      "type": "Property",
+      "label": "a1",
+      "range": {
+        "type": "Text"
+      }
+    },
+    {
+      "type": "Property",
+      "label": "b",
+      "range": {
+        "type": "Text"
+      }
+    },
+    {
+      "type": "Property",
+      "label": "c",
+      "range": {
+        "type": "Text"
+      }
+    },
+    {
+      "type": "Property",
+      "label": "d",
+      "range": {
+        "type": "Text",
+        "format": "Url"
+      }
+    },
+    {
+      "type": "Property",
+      "label": "e",
+      "range": {
+        "type": "Text",
+        "format": "Email"
+      }
+    },
+    {
+      "type": "Property",
+      "label": "f",
+      "range": {
+        "type": "Text",
+        "format": "Hostname"
+      }
+    },
+    {
+      "type": "Property",
+      "label": "g",
+      "range": {
+        "type": "Text",
+        "regex": "[a-z]"
+      }
+    },
+    {
+      "type": "Property",
+      "label": "g1",
+      "range": {
+        "type": "Text",
+        "minLength": 0
+      }
+    },
+    {
+      "type": "Property",
+      "label": "g2",
+      "range": {
+        "type": "Text",
+        "minLength": 0,
+        "maxLength": 10
+      }
+    },
+    {
+      "type": "Property",
+      "label": "h",
+      "range": {
+        "type": "Number"
+      }
+    },
+    {
+      "type": "Property",
+      "label": "i",
+      "range": {
+        "type": "Number",
+        "format": "Int"
+      }
+    },
+    {
+      "type": "Property",
+      "label": "j",
+      "range": {
+        "type": "Number",
+        "format": "Int8"
+      }
+    },
+    {
+      "type": "Property",
+      "label": "k",
+      "range": {
+        "type": "Number",
+        "format": "Int16"
+      }
+    },
+    {
+      "type": "Property",
+      "label": "l",
+      "range": {
+        "type": "Number",
+        "format": "Int32"
+      }
+    },
+    {
+      "type": "Property",
+      "label": "m",
+      "range": {
+        "type": "Number",
+        "format": "Int64"
+      }
+    },
+    {
+      "type": "Property",
+      "label": "n",
+      "range": {
+        "type": "Number",
+        "format": "Float32"
+      }
+    },
+    {
+      "type": "Property",
+      "label": "o",
+      "range": {
+        "type": "Number",
+        "format": "Float64"
+      }
+    },
+    {
+      "type": "Property",
+      "label": "p",
+      "range": {
+        "type": "Number",
+        "min": 0
+      }
+    },
+    {
+      "type": "Property",
+      "label": "q",
+      "range": {
+        "type": "Number",
+        "min": 0,
+        "max": 10
+      }
+    },
+    {
+      "type": "Property",
+      "label": "r",
+      "range": {
+        "type": "Enum",
+        "values": [
+          "one",
+          "two",
+          3,
+          4.5
+        ]
+      }
+    },
+    {
+      "type": "Property",
+      "label": "s",
+      "range": {
+        "type": "Date",
+        "format": "DateTime"
+      }
+    },
+    {
+      "type": "Property",
+      "label": "s1",
+      "range": {
+        "type": "Date",
+        "format": "ShortDate"
+      }
+    },
+    {
+      "type": "Property",
+      "label": "s2",
+      "range": {
+        "type": "Date",
+        "format": "DateTime"
+      }
+    },
+    {
+      "type": "Property",
+      "label": "s3",
+      "range": {
+        "type": "Date",
+        "format": "Time"
+      }
+    },
+    {
+      "type": "Property",
+      "label": "t",
+      "range": {
+        "type": "NestedObject",
+        "propertyRefs": [
+          {
+            "ref": "u",
+            "cardinality": {
+              "minItems": 0,
+              "maxItems": 1
+            }
+          },
+          {
+            "ref": "v",
+            "cardinality": {
+              "minItems": 0,
+              "maxItems": 1
+            }
+          }
+        ]
+      }
+    },
+    {
+      "type": "Property",
+      "label": "u",
+      "range": {
+        "type": "Text"
+      }
+    },
+    {
+      "type": "Property",
+      "label": "v",
+      "range": {
+        "type": "NestedObject",
+        "propertyRefs": [
+          {
+            "ref": "w",
+            "cardinality": {
+              "minItems": 0,
+              "maxItems": 1
+            }
+          }
+        ]
+      }
+    },
+    {
+      "type": "Property",
+      "label": "w",
+      "range": {
+        "type": "Text"
+      }
+    },
+    {
+      "type": "Property",
+      "label": "x",
+      "range": {
+        "type": "LinkedClass",
+        "ref": "class2"
+      }
+    },
+    {
+      "type": "Property",
+      "label": "y",
+      "range": {
+        "type": "Text"
+      }
+    }
+  ]
+}

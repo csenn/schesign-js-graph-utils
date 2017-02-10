@@ -1,25 +1,45 @@
+import { values } from 'lodash'
+
 import {
   validateRange,
   validateCardinality,
   NESTED_OBJECT
 } from './index'
 
-function getPropertyRef (property, cardinality) {
-  /* Use either the uid or label */
-  const ref = property.uid || property.label
-  const propertyRef = { ref }
+export function getRefFromNode (node) {
+  return node.uid || node.label
+}
 
-  if (cardinality) {
-    const err = validateCardinality(opts.cardinality)
-    if (err) {
-      throw new Error(`Cardinality error for property ref ${ref}: ${err}`)
+function cleanObject (obj) {
+  const next = {}
+  Object.keys(obj).forEach(key => {
+    if (obj[key]) {
+      next[key] = obj[key]
     }
+  })
+  return next
+}
+
+function getPropertyRef (property, opts={}) {
+  /* Use either the uid or label */
+  const ref = getRefFromNode(property)
+  const propertyRef = { ref, cardinality: { minItems:0, maxItems: 1 }}
+
+  /* If cardinality is provided, it overwrites required or isMultiple */
+  if ('cardinality' in  opts) {
     propertyRef.cardinality = opts.cardinality
-  } else {
-    propertyRef.cardinality = {
-      minItems: 0,
-      maxItems: 1
+  } else  {
+    if ('required' in opts) {
+      propertyRef.cardinality.minItems = 1
     }
+    if ('isMultiple' in opts) {
+      propertyRef.cardinality.maxItems = null
+    }
+  }
+
+  const err = validateCardinality(propertyRef.cardinality)
+  if (err) {
+    throw new Error(`Cardinality error for property ref ${ref}: ${err}`)
   }
 
   return propertyRef
@@ -73,7 +93,7 @@ export class PropertyNode extends Node {
       throw new Error('Must be an instanceof PropertyNode');
     }
 
-    const propertyRef = getPropertyRef(property, opts && opts.cardinality)
+    const propertyRef = getPropertyRef(property, opts)
     const { ref } = propertyRef
     if (this.propertyLookup[ref]) {
       throw new Error (`Property has already been added to NestedObject: ${this.label}`)
@@ -85,12 +105,12 @@ export class PropertyNode extends Node {
 
 
   toJSON() {
-    return {
+    return cleanObject({
       type: this.type,
       label: this.label,
       description: this.description || null,
       range: this.range
-    }
+    })
   }
 }
 
@@ -111,7 +131,7 @@ export class ClassNode extends Node {
       throw new Error('Must be an instanceof PropertyNode');
     }
 
-    const propertyRef = getPropertyRef(property, opts && opts.cardinality)
+    const propertyRef = getPropertyRef(property, opts)
     const { ref } = propertyRef
     if (this.propertyLookup[ref]) {
       throw new Error ('Property has already been added to class')
@@ -122,13 +142,13 @@ export class ClassNode extends Node {
   }
 
   toJSON() {
-    return {
+    return cleanObject({
       type: this.type,
       label: this.label,
-      description: this.description || null,
-      subClassOf: this.subClassOf || null,
+      description: this.description,
+      subClassOf: this.subClassOf,
       propertyRefs: this.propertyRefs
-    }
+    })
   }
 }
 
@@ -146,14 +166,22 @@ export class Design {
 
   toJSON() {
     const properties = {}
+
+    const addProperty = property => {
+      const ref = getRefFromNode(property)
+      if (!properties[ref]) {
+        properties[ref] = property
+      }
+      values(property.propertyLookup).forEach(addProperty)
+    }
+
     const graph = this.graph.map(node => {
-      Object.assign(properties, node.propertyLookup)
+      values(node.propertyLookup).forEach(addProperty)
       return node.toJSON()
     })
 
-    Object.keys(properties).forEach(key => {
-      const node = properties[key].toJSON()
-      graph.push(node)
+    values(properties).forEach(node => {
+      graph.push(node.toJSON())
     })
 
     return { graph }
