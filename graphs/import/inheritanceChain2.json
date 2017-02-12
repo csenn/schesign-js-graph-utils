@@ -5,7 +5,8 @@
       "label": "class4",
       "subClassOf": "https://www.schesign.com/u/csenn/test_inheritance_1/master/class/class3",
       "propertyRefs": [
-        { "ref": "d",  "cardinality": { "minItems": 0, "maxItems": 1 } }
+        { "ref": "d",  "cardinality": { "minItems": 0, "maxItems": 1 } },
+        { "ref": "a",  "cardinality": { "minItems": 0, "maxItems": 1 } }
       ]
     },
     {
@@ -15,6 +16,11 @@
       "propertyRefs": [
         { "ref": "e", "cardinality": { "minItems": 0, "maxItems": 1 } }
       ]
+    },
+    {
+      "type": "Property",
+      "label": "a",
+      "range": { "type": "Boolean" }
     },
     {
       "type": "Property",

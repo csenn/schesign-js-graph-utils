@@ -7,14 +7,21 @@ import {
   PropertyNode,
 } from '../src/design';
 
+import createPropertyVariations from './generate/createPropertyVariations'
+import createInheritanceChain1 from './generate/createInheritanceChain1'
+import createInheritanceChain2 from './generate/createInheritanceChain2'
+import createLinkedNodes1 from './generate/createLinkedNodes1'
+import createLinkedNodes2 from './generate/createLinkedNodes2'
+
 import propertyVariations from '../graphs/import/propertyVariations';
-import testInheritance1 from '../graphs/import/testInheritance1'
-import testInheritance2 from '../graphs/import/testInheritance2'
+import inheritanceChain1 from '../graphs/import/inheritanceChain1'
+import inheritanceChain2 from '../graphs/import/inheritanceChain2'
+import linkedNodes1 from '../graphs/import/linkedNodes1'
+import linkedNodes2 from '../graphs/import/linkedNodes2'
 
 const { describe, it } = global;
 
 describe('Generating a design', () => {
-  let design = new Design();
   describe('and creating properties', () => {
     it('should create a property node with range text', () => {
       const node = new PropertyNode({
@@ -65,11 +72,23 @@ describe('Generating a design', () => {
         expect(err).to.eql(new Error('Must be an instanceof ClassNode'));
       }
     });
+    it('should throw when a class is added with same name', () => {
+      const d = new Design();
+      const class1 = new ClassNode({ label: 'class1' });
+      const class2 = new ClassNode({ label: 'class1' });
+      try {
+        d.addClass(class1);
+        d.addClass(class2);
+      } catch (err) {
+        expect(err).to.eql(new Error('ClassNode has already been added class1'));
+      }
+    });
     it('should add an empty class node', () => {
+      const design = new Design();
       const node = new ClassNode({ label: 'classA' });
       design.addClass(node);
       expect(node.label).to.equal('classA');
-      expect(design.graph.length).to.equal(1);
+      expect(design.classes.length).to.equal(1);
     });
     it('should add an propertyRef by reference to a class node', () => {
       const node = new ClassNode({ label: 'classA' });
@@ -84,128 +103,19 @@ describe('Generating a design', () => {
   });
   describe('and creating full design', () => {
     it('should output the propertyVariations graph', () => {
-      const design = new Design();
-      const class1 = new ClassNode({ label: 'class1', description: 'First Description' });
-      const class2 = new ClassNode({ label: 'class2' });
-      const propA = new PropertyNode({ label: 'a', range: rangeTypes.boolean() });
-      const propA1 = new PropertyNode({ label: 'a1', range: rangeTypes.text() });
-      const propB = new PropertyNode({ label: 'b', range: rangeTypes.text() });
-      const propC = new PropertyNode({ label: 'c', range: rangeTypes.text() });
-      const propD = new PropertyNode({ label: 'd', range: rangeTypes.url() });
-      const propE = new PropertyNode({ label: 'e', range: rangeTypes.email() });
-      const propF = new PropertyNode({ label: 'f', range: rangeTypes.hostname() });
-      const propG = new PropertyNode({ label: 'g', range: rangeTypes.regex('[a-z]') });
-      const propG1 = new PropertyNode({ label: 'g1', range: rangeTypes.text({ minLength: 0 }) });
-      const propG2 = new PropertyNode({ label: 'g2', range: rangeTypes.text({ minLength: 0, maxLength: 10 }) });
-      const propH = new PropertyNode({ label: 'h', range: rangeTypes.number() });
-      const propI = new PropertyNode({ label: 'i', range: rangeTypes.int() });
-      const propJ = new PropertyNode({ label: 'j', range: rangeTypes.int8() });
-      const propK = new PropertyNode({ label: 'k', range: rangeTypes.int16() });
-      const propL = new PropertyNode({ label: 'l', range: rangeTypes.int32() });
-      const propM = new PropertyNode({ label: 'm', range: rangeTypes.int64() });
-      const propN = new PropertyNode({ label: 'n', range: rangeTypes.float32() });
-      const propO = new PropertyNode({ label: 'o', range: rangeTypes.float64() });
-      const propP = new PropertyNode({ label: 'p', range: rangeTypes.number({ min: 0 }) });
-      const propQ = new PropertyNode({ label: 'q', range: rangeTypes.number({ min: 0, max: 10 }) });
-      const propR = new PropertyNode({ label: 'r', range: rangeTypes.enum(['one', 'two', 3, 4.5]) });
-      const propS = new PropertyNode({ label: 's', range: rangeTypes.dateTime() });
-      const propS1 = new PropertyNode({ label: 's1', range: rangeTypes.shortDate() });
-      const propS2 = new PropertyNode({ label: 's2', range: rangeTypes.dateTime() });
-      const propS3 = new PropertyNode({ label: 's3', range: rangeTypes.time() });
-      const propT = new PropertyNode({ label: 't', range: rangeTypes.nestedObject() });
-      const propU = new PropertyNode({ label: 'u', range: rangeTypes.text() });
-      const propV = new PropertyNode({ label: 'v', range: rangeTypes.nestedObject() });
-      const propW = new PropertyNode({ label: 'w', range: rangeTypes.text() });
-      const propX = new PropertyNode({ label: 'x', range: rangeTypes.linkedClass(class2) });
-      const propY = new PropertyNode({ label: 'y', range: rangeTypes.text() });
-
-      propV.addProperty(propW);
-      propT.addProperty(propU);
-      propT.addProperty(propV);
-
-      class1.addProperty(propA);
-      class1.addProperty(propA1);
-      class1.addProperty(propB, { required: true });
-      class1.addProperty(propC, { isMultiple: true });
-      class1.addProperty(propD);
-      class1.addProperty(propE);
-      class1.addProperty(propF);
-      class1.addProperty(propG);
-      class1.addProperty(propG1);
-      class1.addProperty(propG2);
-      class1.addProperty(propH);
-      class1.addProperty(propI);
-      class1.addProperty(propJ);
-      class1.addProperty(propK);
-      class1.addProperty(propL);
-      class1.addProperty(propM);
-      class1.addProperty(propN);
-      class1.addProperty(propO);
-      class1.addProperty(propP);
-      class1.addProperty(propQ);
-      class1.addProperty(propR);
-      class1.addProperty(propS);
-      class1.addProperty(propS1);
-      class1.addProperty(propS2);
-      class1.addProperty(propS3);
-      class1.addProperty(propT);
-      class1.addProperty(propX);
-
-      class2.addProperty(propY);
-
-      design.addClass(class1);
-      design.addClass(class2);
-
-      const result = design.toJSON();
-      expect(result).to.deep.equal(propertyVariations);
+      expect(createPropertyVariations).to.deep.equal(propertyVariations);
     });
-    it('should output the testInheritance1 graph', () => {
-      const design = new Design();
-      const class1 = new ClassNode({ label: 'class1' });
-      const class2 = new ClassNode({ label: 'class2' });
-      const class3 = new ClassNode({ label: 'class3' });
-
-      const propA = new PropertyNode({ label: 'a', range: rangeTypes.text() })
-      const propA1 = new PropertyNode({ label: 'a1', range: rangeTypes.text() })
-      const propB = new PropertyNode({ label: 'b', range: rangeTypes.text() })
-      const propC = new PropertyNode({ label: 'c', range: rangeTypes.text() })
-
-      class1.addProperty(propA)
-      class1.addProperty(propA1)
-      class2.addProperty(propB)
-      class3.addProperty(propC)
-
-      class2.inheritsFrom(class1)
-      class3.inheritsFrom(class2)
-
-      class2.excludeParentProperty(propA1)
-
-      design.addClass(class1)
-      design.addClass(class2)
-      design.addClass(class3)
-
-
-      const result = design.toJSON()
-      expect(result).to.deep.equal(testInheritance1)
+    it('should output the inheritanceChain1 graph', () => {
+      expect(createInheritanceChain1).to.deep.equal(inheritanceChain1)
     });
-    it('should output the testInheritance2 graph', () => {
-      const design = new Design();
-      const class4 = new ClassNode({ label: 'class4' });
-      const class5 = new ClassNode({ label: 'class5' });
-      const propD = new PropertyNode({ label: 'd', range: rangeTypes.text() })
-      const propE = new PropertyNode({ label: 'e', range: rangeTypes.text() })
-
-      class4.addProperty(propD)
-      class5.addProperty(propE)
-
-      class4.inheritsFrom('https://www.schesign.com/u/csenn/test_inheritance_1/master/class/class3')
-      class5.inheritsFrom(class4)
-
-      design.addClass(class4)
-      design.addClass(class5)
-
-      const result = design.toJSON()
-      expect(result).to.deep.equal(testInheritance2)
+    it('should output the inheritanceChain2 graph', () => {
+      expect(createInheritanceChain2).to.deep.equal(inheritanceChain2)
+    });
+    it('should output the linkedNodes1 graph', () => {
+      expect(createLinkedNodes1).to.deep.equal(linkedNodes1)
+    });
+    it('should output the linkedNodes2 graph', () => {
+      expect(createLinkedNodes2).to.deep.equal(linkedNodes2)
     });
   });
 });

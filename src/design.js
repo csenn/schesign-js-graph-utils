@@ -1,9 +1,11 @@
-import { values } from 'lodash';
+import { values, isString } from 'lodash';
 
 import {
   validateRange,
   validateCardinality,
   NESTED_OBJECT,
+  CLASS,
+  PROPERTY
 } from './index';
 
 export function getRefFromNode(node) {
@@ -20,9 +22,17 @@ function cleanObject(obj) {
   return next;
 }
 
-function getPropertyRef(property, opts = {}) {
+function getPropertyRef(propertyOrId, opts = {}) {
+
+  if (!(propertyOrId instanceof PropertyNode) && !isString(propertyOrId)) {
+    throw new Error('Must be an instanceof PropertyNode or a property uid');
+  }
+
+  const ref = propertyOrId instanceof PropertyNode
+    ? getRefFromNode(propertyOrId)
+    : propertyOrId
+
   /* Use either the uid or label */
-  const ref = getRefFromNode(property);
   const propertyRef = { ref, cardinality: { minItems: 0, maxItems: 1 } };
 
   /* If cardinality is provided, it overwrites required or isMultiple */
@@ -58,7 +68,6 @@ export class Node {
       this.description = opts.description;
     }
   }
-
 }
 
 export class PropertyNode extends Node {
@@ -84,25 +93,23 @@ export class PropertyNode extends Node {
     this.range = nextRange;
   }
 
-  addProperty(property, opts) {
+  addProperty(propertyOrRef, opts) {
     if (this.range.type !== NESTED_OBJECT) {
       throw new Error('Must have range NestedObject to add property ref');
     }
 
-    if (!(property instanceof PropertyNode)) {
-      throw new Error('Must be an instanceof PropertyNode');
-    }
-
-    const propertyRef = getPropertyRef(property, opts);
+    const propertyRef = getPropertyRef(propertyOrRef, opts);
     const { ref } = propertyRef;
     if (this.propertyLookup[ref]) {
       throw new Error(`Property has already been added to NestedObject: ${this.label}`);
     }
-    this.propertyLookup[ref] = property;
 
     this.range.propertyRefs.push(propertyRef);
-  }
 
+    if (propertyOrRef instanceof PropertyNode) {
+      this.propertyLookup[ref] = propertyOrRef;
+    }
+  }
 
   toJSON() {
     return cleanObject({
@@ -127,19 +134,16 @@ export class ClassNode extends Node {
     this.excludeParentProperties = []
   }
 
-  addProperty(property, opts) {
-    if (!(property instanceof PropertyNode)) {
-      throw new Error('Must be an instanceof PropertyNode');
-    }
-
-    const propertyRef = getPropertyRef(property, opts);
+  addProperty(propertyOrRef, opts) {
+    const propertyRef = getPropertyRef(propertyOrRef, opts);
     const { ref } = propertyRef;
     if (this.propertyLookup[ref]) {
       throw new Error('Property has already been added to class');
     }
-    this.propertyLookup[ref] = property;
-
     this.propertyRefs.push(propertyRef);
+    if (propertyOrRef instanceof PropertyNode) {
+      this.propertyLookup[ref] = propertyOrRef;
+    }
   }
 
   inheritsFrom (classOrRef) {
@@ -174,35 +178,50 @@ export class ClassNode extends Node {
 
 export class Design {
   constructor(opts) {
-    this.graph = [];
+    this.classes = [];
   }
 
   addClass(node) {
     if (!(node instanceof ClassNode)) {
       throw new Error('Must be an instanceof ClassNode');
     }
-    this.graph.push(node);
+    const found = this.classes.find(classNode => {
+      return classNode.label.toLowerCase() === node.label.toLowerCase()
+    })
+    if (found) {
+      throw new Error(`ClassNode has already been added ${found.label}`);
+    }
+    this.classes.push(node);
   }
 
   toJSON() {
     const properties = {};
 
-    const addProperty = property => {
+    const addUniqueProperty = property => {
       const ref = getRefFromNode(property);
       if (!properties[ref]) {
         properties[ref] = property;
       }
-      values(property.propertyLookup).forEach(addProperty);
+      values(property.propertyLookup).forEach(addUniqueProperty);
     };
 
-    const graph = this.graph.map(node => {
-      values(node.propertyLookup).forEach(addProperty);
+    const graph = this.classes.map(node => {
+      values(node.propertyLookup).forEach(addUniqueProperty);
       return node.toJSON();
     });
 
     values(properties).forEach(node => {
       graph.push(node.toJSON());
     });
+
+    graph.sort((a, b) => {
+      if (a.type !== b.type) {
+        return a.type === CLASS ? -1 : 1
+      }
+      const aLast = a.label.toLowerCase()
+      const bLast = b.label.toLowerCase()
+      return aLast > bLast ? 1 : -1
+    })
 
     return { graph };
   }
