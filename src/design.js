@@ -201,8 +201,8 @@ export class Design {
       const ref = getRefFromNode(property);
       if (!properties[ref]) {
         properties[ref] = property;
+        values(property.propertyLookup).forEach(addUniqueProperty);
       }
-      values(property.propertyLookup).forEach(addUniqueProperty);
     };
 
     const graph = this.classes.map(node => {
