@@ -1,8 +1,15 @@
 import { isNumber, isArray } from 'lodash';
 
-/* Import to export. There is probably a more standard way to expose this */
+/* Import to export. There is probably a more standard way to expose these */
 import rangeTypesExport from './rangeTypes'
+import * as DesignExport from './design'
+import * as PrintExport from './printDesign'
+
 export const rangeTypes = rangeTypesExport
+export const Design = DesignExport.Design
+export const ClassNode = DesignExport.ClassNode
+export const PropertyNode = DesignExport.PropertyNode
+export const printDesign = PrintExport.printDesign
 
 /* Node types */
 export const CLASS = 'Class'
