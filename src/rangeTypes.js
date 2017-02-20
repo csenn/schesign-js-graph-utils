@@ -1,5 +1,5 @@
 import { isNumber } from 'lodash';
-import * as constants from './index';
+import * as constants from './constants';
 import { ClassNode, getRefFromNode } from './design';
 
 const rangeTypes = {

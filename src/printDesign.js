@@ -1,5 +1,5 @@
 import colors from 'colors/safe'
-import { NESTED_OBJECT } from './index'
+import { NESTED_OBJECT } from './constants'
 
 function getNodeId (node) {
   return node.uid || node.label

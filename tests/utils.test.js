@@ -3,7 +3,7 @@ import {
   createUid,
   isRequiredCardinality,
   isMultipleCardinality,
-} from '../src';
+} from '../src/utils';
 
 const { describe, it } = global;
 

@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import * as constants from '../src/index';
+import * as constants from '../src/constants';
 import rangeTypes from '../src/rangeTypes';
 import {
   Design,

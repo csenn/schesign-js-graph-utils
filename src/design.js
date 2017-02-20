@@ -1,12 +1,15 @@
 import { values, isString } from 'lodash';
 
 import {
-  validateRange,
-  validateCardinality,
   NESTED_OBJECT,
   CLASS,
   PROPERTY
-} from './index';
+} from './constants';
+
+import {
+  validateRange,
+  validateCardinality,
+} from './validate'
 
 export function getRefFromNode(node) {
   return node.uid || node.label;
