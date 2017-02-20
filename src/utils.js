@@ -1,7 +1,13 @@
+import { validateReducedUid } from './validate'
 import { isNumber, isArray, isString } from 'lodash';
 
 /* Create a uid */
-export function createUid(options) {
+export function createUid(reduced) {
+  const err = validateReducedUid(reduced)
+  if (err) {
+    throw new Error(err)
+  }
+
   const {
     ownerType,
     userOrOrg,
@@ -9,14 +15,7 @@ export function createUid(options) {
     versionLabel,
     resourceType,
     classOrProperty,
-  } = options;
-
-  if (ownerType !== 'u' && ownerType !== 'o') {
-    throw new Error('Bad owner type, must be "u" or "o"');
-  }
-  if (!userOrOrg) {
-    throw new Error('Bad userOrOrg, must be provided');
-  }
+  } = reduced;
 
   let path = `/${ownerType}/${userOrOrg}`;
 
@@ -25,12 +24,6 @@ export function createUid(options) {
     if (versionLabel) {
       path += `/${versionLabel}`;
       if (resourceType) {
-        if (resourceType !== 'class' && resourceType !== 'property') {
-          throw new Error('Bad resourceType, must be "class" or "property"');
-        }
-        if (!classOrProperty) {
-          throw new Error('Option classOrProperty required with resourceType');
-        }
         path += `/${resourceType}/${classOrProperty}`;
       }
     }

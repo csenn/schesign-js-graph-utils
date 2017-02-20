@@ -1,4 +1,5 @@
 import { values, isString } from 'lodash';
+import { validateGraph } from './validate'
 
 import {
   NESTED_OBJECT,
@@ -225,6 +226,11 @@ export class Design {
       const bLast = b.label.toLowerCase()
       return aLast > bLast ? 1 : -1
     })
+
+    const err = validateGraph(graph)
+    if (err) {
+      throw new Error(`Resulting graph is invalid: ${err}`)
+    }
 
     return { graph };
   }

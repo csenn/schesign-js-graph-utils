@@ -1,5 +1,5 @@
 import { isNumber, isArray, isString, isFinite } from 'lodash';
-import { reduceUid, createUid } from './utils'
+import { reduceUid } from './utils'
 import * as constants from './constants'
 
 const LETTERS_NUMBERS_UNDERSCORE = /^[a-zA-Z0-9_]+$/
@@ -39,21 +39,9 @@ export function validateVersionLabel(label) {
     return ERROR_MESSAGE
   }
   for (let el of split) {
-    console.log(el, parseInt(el), isNumber(parseInt(el)))
     if (!isFinite(parseInt(el))) {
       return ERROR_MESSAGE
     }
-  }
-  return null
-}
-
-/* This will work for now */
-export function validateUid(uid) {
-  try {
-    const reduced = reduceUid(uid)
-    const finalUid = createUid(reduced)
-  } catch(err) {
-    return err.toString()
   }
   return null
 }
@@ -69,10 +57,10 @@ export function validateReducedUid(reduced) {
   } = reduced;
 
   if (ownerType !== 'u' && ownerType !== 'o') {
-    return 'Key ownerType, must be "u" or "o"'
+    return 'Key ownerType must be "u" or "o"'
   }
   if (!userOrOrg) {
-    return 'Key userOrOrg, must be provided'
+    return 'Key userOrOrg must be provided'
   }
 
   if (designName) {
@@ -85,17 +73,26 @@ export function validateReducedUid(reduced) {
         if (resourceType !== 'class' && resourceType !== 'property') {
           return 'Bad resourceType, must be "class" or "property"'
         }
-        if (!classOrProperty) {
-          return 'Option classOrProperty required with resourceType'
-        }
-        const classError = validateNodeLabel(classOrProperty)
-        if (classError) {
-          return classError
+        const nodeLabelError = validateNodeLabel(classOrProperty)
+        if (nodeLabelError) {
+          return nodeLabelError
         }
       }
     }
   }
+  return null
+}
 
+/* This will work for now */
+export function validateUid(uid) {
+  if (!isString(uid)) {
+    return 'uid must be a string'
+  }
+  const reduced = reduceUid(uid)
+  const error = validateReducedUid(reduced)
+  if (error) {
+    return error
+  }
   return null
 }
 
@@ -198,6 +195,10 @@ function validateNode (type, node, allowed) {
   if (!isString(node.label)) {
     return `${type} node is missing a label`
   }
+  const labelError = validateNodeLabel(node.label)
+  if (labelError) {
+    return labelError
+  }
   for (let key of Object.keys(node)) {
     if (!allowed.includes(key)) {
       return `Class node hello should not have property: ${key}`
@@ -283,14 +284,21 @@ export function validateGraph (graph) {
     }
   }
 
+  /* Use resolved to prevent recursion */
+  const resolved = {}
   const resolvePropertyRefs = function(node) {
     const propertyRefs = node.type === constants.CLASS
       ? node.propertyRefs
       : node.range.propertyRefs
 
     for (let propertyRef of propertyRefs) {
-      const { ref } = propertyRef
-      if (!validateUid(ref)) {
+      const ref = propertyRef.ref.toLowerCase()
+      if (resolved[ref]) {
+        continue
+      }
+      resolved[ref] = true
+      const uidError = validateUid(ref)
+      if (!uidError) {
         continue
       }
       const property = properties[ref]
@@ -314,5 +322,21 @@ export function validateGraph (graph) {
       return err
     }
   }
+
+  for (let key of Object.keys(properties)) {
+    const propertyNode = properties[key]
+    if (propertyNode.range.type === constants.LINKED_CLASS) {
+      const ref = propertyNode.range.ref.toLowerCase()
+      const uidError = validateUid(ref)
+      if (!uidError) {
+        continue
+      }
+      if (!classes[ref]) {
+        return `In property ${propertyNode.label} could not resolve ref ${ref}`
+      }
+    }
+
+  }
+
   return null
 }
