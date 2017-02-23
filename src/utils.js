@@ -1,6 +1,6 @@
 import colors from 'colors/safe';
 import { validateReducedUid } from './validate';
-import { isNumber, isArray, isString } from 'lodash';
+import { isNumber, isString } from 'lodash';
 import {
   NESTED_OBJECT,
   USER_UID,
@@ -12,7 +12,7 @@ import {
 } from './constants';
 
 /* Create a uid */
-export function createUid(reduced) {
+export function createUid(reduced, short) {
   const err = validateReducedUid(reduced);
   if (err) {
     throw new Error(err);
@@ -27,7 +27,7 @@ export function createUid(reduced) {
     classOrProperty,
   } = reduced;
 
-  let path = `/${ownerType}/${userOrOrg}`;
+  let path = `${ownerType}/${userOrOrg}`;
 
   if (designName) {
     path += `/${designName}`;
@@ -39,7 +39,11 @@ export function createUid(reduced) {
     }
   }
 
-  return `https://www.schesign.com${path.toLowerCase()}`;
+  path = path.toLowerCase();
+
+  return short
+    ? path
+    : `https://www.schesign.com/${path}`;
 }
 
 export function reduceUid(uid) {
