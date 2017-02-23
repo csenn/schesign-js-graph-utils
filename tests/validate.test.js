@@ -345,5 +345,51 @@ describe('graph validation functions', () => {
       const err = validateGraph(graph)
       expect(err).to.equal(`In property property1 could not resolve ref class3`);
     });
+
+    it('should pass when a class subClassOf resolves', () => {
+      const graph = [
+        {
+          type: 'Class',
+          label: 'class1',
+          propertyRefs: [{ ref: 'property1', cardinality: {minItems: 0, maxItems: 1} }]
+        },
+        {
+          type: 'Class',
+          label: 'class2',
+          subClassOf: 'class1',
+          propertyRefs: [{ ref: 'property1', cardinality: {minItems: 0, maxItems: 1} }]
+        },
+        {
+          type: 'Property',
+          label: 'property1',
+          range: { type: 'Text' }
+        }
+      ]
+      const err = validateGraph(graph)
+      expect(err).to.equal(null);
+    });
+
+    it('should fail when a class subClassOf does not resolve', () => {
+      const graph = [
+        {
+          type: 'Class',
+          label: 'class1',
+          propertyRefs: [{ ref: 'property1', cardinality: {minItems: 0, maxItems: 1} }]
+        },
+        {
+          type: 'Class',
+          label: 'class2',
+          subClassOf: 'class3',
+          propertyRefs: [{ ref: 'property1', cardinality: {minItems: 0, maxItems: 1} }]
+        },
+        {
+          type: 'Property',
+          label: 'property1',
+          range: { type: 'Text' }
+        }
+      ]
+      const err = validateGraph(graph)
+      expect(err).to.equal('In Class class2 could not resolve subClassOf class3');
+    });
   });
 });

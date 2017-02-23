@@ -1,5 +1,5 @@
 
-/* Node types */
+/* Resource types */
 export const CLASS = 'Class'
 export const PROPERTY = 'Property'
 
@@ -31,3 +31,11 @@ export const NUMBER_INT_64 = 'Int64';
 
 export const NUMBER_FLOAT_32 = 'Float32';
 export const NUMBER_FLOAT_64 = 'Float64';
+
+/* Uid Types */
+export const USER_UID = 'UserUid'
+export const ORGANIZATION_UID = 'OrganizationUid'
+export const DESIGN_UID = 'DesignUid'
+export const VERSION_UID = 'VersionUid'
+export const PROPERTY_UID = 'PropertyUid'
+export const CLASS_UID = 'ClassUid'

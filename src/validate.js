@@ -1,5 +1,5 @@
 import { isNumber, isArray, isString, isFinite } from 'lodash';
-import { reduceUid } from './utils'
+import { reduceUid, getUidType } from './utils'
 import * as constants from './constants'
 
 const LETTERS_NUMBERS_UNDERSCORE = /^[a-zA-Z0-9_]+$/
@@ -84,16 +84,49 @@ export function validateReducedUid(reduced) {
 }
 
 /* This will work for now */
-export function validateUid(uid) {
-  if (!isString(uid)) {
-    return 'uid must be a string'
+export function validateUid(uid, expectedType) {
+  try {
+    const type = getUidType(uid)
+    if (expectedType && expectedType !== type) {
+      return `Uid is not of type: ${expectedType}`
+    }
+    if (isString(type)) {
+      return null
+    }
+    return `Could not validate uid: ${uid}`
+  } catch (err) {
+    return err
   }
-  const reduced = reduceUid(uid)
-  const error = validateReducedUid(reduced)
-  if (error) {
-    return error
-  }
-  return null
+}
+
+export function validateUserUid (uid) {
+  const err = validateUid(uid, constants.USER_UID)
+  return err || null
+}
+
+export function validateOrganizationUid (uid) {
+  const err = validateUid(uid, constants.ORGANIZATION_UID)
+  return err || null
+}
+
+export function validateDesignUid (uid) {
+  const err = validateUid(uid, constants.DESIGN_UID)
+  return err || null
+}
+
+export function validateVersionUid (uid) {
+  const err = validateUid(uid, constants.VERSION_UID)
+  return err || null
+}
+
+export function validateClassUid (uid) {
+  const err = validateUid(uid, constants.CLASS_UID)
+  return err || null
+}
+
+export function validatePropertyUid (uid) {
+  const err = validateUid(uid, constants.PROPERTY_UID)
+  return err || null
 }
 
 /* Cardinality helpers */
@@ -303,7 +336,7 @@ export function validateGraph (graph) {
       }
       const property = properties[ref]
       if (!property) {
-        return `${node.type} node ${node.label} ref ${ref} does not exist`
+        return `${node.type} node ${node.label} ref ${propertyRef.ref} does not exist`
       }
       if (property.range.type === constants.NESTED_OBJECT) {
         const nestedObjectErr = resolvePropertyRefs(property)
@@ -315,14 +348,26 @@ export function validateGraph (graph) {
     return null
   }
 
+  /* Resolve propertyRefs and subClassOf for classNodes */
   for (let key of Object.keys(classes)) {
     const classNode = classes[key]
     const err = resolvePropertyRefs(classNode)
     if (err) {
       return err
     }
+    if (classNode.subClassOf) {
+      const subClassOf = classNode.subClassOf.toLowerCase()
+      const uidError = validateUid(subClassOf)
+      if (!uidError) {
+        continue
+      }
+      if (!classes[subClassOf]) {
+        return `In Class ${classNode.label} could not resolve subClassOf ${classNode.subClassOf}`
+      }
+    }
   }
 
+  /* Resolve classIds for properties with linked class range types */
   for (let key of Object.keys(properties)) {
     const propertyNode = properties[key]
     if (propertyNode.range.type === constants.LINKED_CLASS) {
@@ -332,7 +377,7 @@ export function validateGraph (graph) {
         continue
       }
       if (!classes[ref]) {
-        return `In property ${propertyNode.label} could not resolve ref ${ref}`
+        return `In property ${propertyNode.label} could not resolve ref ${propertyNode.range.ref}`
       }
     }
 
