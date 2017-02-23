@@ -1,4 +1,4 @@
-import rangeTypes from '../../src/rangeTypes';
+import * as rangeTypes from '../../src/rangeTypes';
 import {
   Design,
   ClassNode,
@@ -28,7 +28,7 @@ const propN = new PropertyNode({ label: 'n', range: rangeTypes.float32() });
 const propO = new PropertyNode({ label: 'o', range: rangeTypes.float64() });
 const propP = new PropertyNode({ label: 'p', range: rangeTypes.number({ min: 0 }) });
 const propQ = new PropertyNode({ label: 'q', range: rangeTypes.number({ min: 0, max: 10 }) });
-const propR = new PropertyNode({ label: 'r', range: rangeTypes.enum(['one', 'two', 3, 4.5]) });
+const propR = new PropertyNode({ label: 'r', range: rangeTypes.enu(['one', 'two', 3, 4.5]) });
 const propS = new PropertyNode({ label: 's', range: rangeTypes.dateTime() });
 const propS1 = new PropertyNode({ label: 's1', range: rangeTypes.shortDate() });
 const propS2 = new PropertyNode({ label: 's2', range: rangeTypes.dateTime() });
@@ -77,4 +77,4 @@ class2.addProperty(propY);
 design.addClass(class1);
 design.addClass(class2);
 
-export default design.toJSON()
+export default design.toJSON();

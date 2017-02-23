@@ -1,49 +1,49 @@
 import { isNumber, isArray, isString, isFinite } from 'lodash';
-import { reduceUid, getUidType } from './utils'
-import * as constants from './constants'
+import { reduceUid, getUidType } from './utils';
+import * as constants from './constants';
 
-const LETTERS_NUMBERS_UNDERSCORE = /^[a-zA-Z0-9_]+$/
-const LETTERS_NUMBERS_UNDERSCORE_DASH = /^[a-zA-Z0-9_-]+$/
+const LETTERS_NUMBERS_UNDERSCORE = /^[a-zA-Z0-9_]+$/;
+const LETTERS_NUMBERS_UNDERSCORE_DASH = /^[a-zA-Z0-9_-]+$/;
 
 export function validateDesignLabel(label) {
   if (!isString(label)) {
-    return 'Label must be a string'
+    return 'Label must be a string';
   }
   if (!LETTERS_NUMBERS_UNDERSCORE_DASH.test(label)) {
-    return 'Label can only have letters, numbers, underscores, or dashes'
+    return 'Label can only have letters, numbers, underscores, or dashes';
   }
-  return null
+  return null;
 }
 
 export function validateNodeLabel(label) {
   if (!isString(label)) {
-    return 'Label must be a string'
+    return 'Label must be a string';
   }
   if (!LETTERS_NUMBERS_UNDERSCORE.test(label)) {
-    return 'Label can only have letters, numbers, or underscores'
+    return 'Label can only have letters, numbers, or underscores';
   }
-  return null
+  return null;
 }
 
 export function validateVersionLabel(label) {
   if (!isString(label)) {
-    return 'Label must be a string'
+    return 'Label must be a string';
   }
   if (label === 'master') {
-    return null
+    return null;
   }
 
-  const split = label.split('.')
-  const ERROR_MESSAGE = 'Label should be of format *.*.*'
+  const split = label.split('.');
+  const ERROR_MESSAGE = 'Label should be of format *.*.*';
   if (split.length !== 3) {
-    return ERROR_MESSAGE
+    return ERROR_MESSAGE;
   }
   for (let el of split) {
     if (!isFinite(parseInt(el))) {
-      return ERROR_MESSAGE
+      return ERROR_MESSAGE;
     }
   }
-  return null
+  return null;
 }
 
 export function validateReducedUid(reduced) {
@@ -57,76 +57,76 @@ export function validateReducedUid(reduced) {
   } = reduced;
 
   if (ownerType !== 'u' && ownerType !== 'o') {
-    return 'Key ownerType must be "u" or "o"'
+    return 'Key ownerType must be "u" or "o"';
   }
   if (!userOrOrg) {
-    return 'Key userOrOrg must be provided'
+    return 'Key userOrOrg must be provided';
   }
 
   if (designName) {
-    const designError = validateDesignLabel(designName)
+    const designError = validateDesignLabel(designName);
     if (designError) {
-      return designError
+      return designError;
     }
     if (versionLabel) {
       if (resourceType) {
         if (resourceType !== 'class' && resourceType !== 'property') {
-          return 'Bad resourceType, must be "class" or "property"'
+          return 'Bad resourceType, must be "class" or "property"';
         }
-        const nodeLabelError = validateNodeLabel(classOrProperty)
+        const nodeLabelError = validateNodeLabel(classOrProperty);
         if (nodeLabelError) {
-          return nodeLabelError
+          return nodeLabelError;
         }
       }
     }
   }
-  return null
+  return null;
 }
 
 /* This will work for now */
 export function validateUid(uid, expectedType) {
   try {
-    const type = getUidType(uid)
+    const type = getUidType(uid);
     if (expectedType && expectedType !== type) {
-      return `Uid is not of type: ${expectedType}`
+      return `Uid is not of type: ${expectedType}`;
     }
     if (isString(type)) {
-      return null
+      return null;
     }
-    return `Could not validate uid: ${uid}`
+    return `Could not validate uid: ${uid}`;
   } catch (err) {
-    return err
+    return err;
   }
 }
 
-export function validateUserUid (uid) {
-  const err = validateUid(uid, constants.USER_UID)
-  return err || null
+export function validateUserUid(uid) {
+  const err = validateUid(uid, constants.USER_UID);
+  return err || null;
 }
 
-export function validateOrganizationUid (uid) {
-  const err = validateUid(uid, constants.ORGANIZATION_UID)
-  return err || null
+export function validateOrganizationUid(uid) {
+  const err = validateUid(uid, constants.ORGANIZATION_UID);
+  return err || null;
 }
 
-export function validateDesignUid (uid) {
-  const err = validateUid(uid, constants.DESIGN_UID)
-  return err || null
+export function validateDesignUid(uid) {
+  const err = validateUid(uid, constants.DESIGN_UID);
+  return err || null;
 }
 
-export function validateVersionUid (uid) {
-  const err = validateUid(uid, constants.VERSION_UID)
-  return err || null
+export function validateVersionUid(uid) {
+  const err = validateUid(uid, constants.VERSION_UID);
+  return err || null;
 }
 
-export function validateClassUid (uid) {
-  const err = validateUid(uid, constants.CLASS_UID)
-  return err || null
+export function validateClassUid(uid) {
+  const err = validateUid(uid, constants.CLASS_UID);
+  return err || null;
 }
 
-export function validatePropertyUid (uid) {
-  const err = validateUid(uid, constants.PROPERTY_UID)
-  return err || null
+export function validatePropertyUid(uid) {
+  const err = validateUid(uid, constants.PROPERTY_UID);
+  return err || null;
 }
 
 /* Cardinality helpers */
@@ -145,12 +145,12 @@ export function validateCardinality(cardinality) {
 }
 
 /* Todo: check for index, foreign, etc when added */
-export function validatePropertyRef (propertyRef) {
-  const err = validateCardinality(propertyRef.cardinality)
+export function validatePropertyRef(propertyRef) {
+  const err = validateCardinality(propertyRef.cardinality);
   if (err) {
-    return err
+    return err;
   }
-  return null
+  return null;
 }
 
 /* Range Helpers */
@@ -224,23 +224,23 @@ export function validateRange(range) {
   return null;
 }
 
-function validateNode (type, node, allowed) {
+function validateNode(type, node, allowed) {
   if (!isString(node.label)) {
-    return `${type} node is missing a label`
+    return `${type} node is missing a label`;
   }
-  const labelError = validateNodeLabel(node.label)
+  const labelError = validateNodeLabel(node.label);
   if (labelError) {
-    return labelError
+    return labelError;
   }
   for (let key of Object.keys(node)) {
     if (!allowed.includes(key)) {
-      return `Class node hello should not have property: ${key}`
+      return `Class node hello should not have property: ${key}`;
     }
   }
-  return null
+  return null;
 }
 
-export function validateClassNode (classNode) {
+export function validateClassNode(classNode) {
   const nodeErr = validateNode(constants.CLASS, classNode, [
     'uid',
     'type',
@@ -248,140 +248,139 @@ export function validateClassNode (classNode) {
     'propertyRefs',
     'description',
     'subClassOf',
-    'excludeParentProperties'
-  ])
+    'excludeParentProperties',
+  ]);
   if (nodeErr) {
-    return nodeErr
+    return nodeErr;
   }
   if (!isArray(classNode.propertyRefs)) {
-    return `Class node ${classNode.label} is missing propertyRefs`
+    return `Class node ${classNode.label} is missing propertyRefs`;
   }
   for (let propertyRef of classNode.propertyRefs) {
-    const err = validatePropertyRef(propertyRef)
+    const err = validatePropertyRef(propertyRef);
     if (err) {
-      return `Class node ${classNode.label} has error: ${err}`
+      return `Class node ${classNode.label} has error: ${err}`;
     }
   }
-  return null
+  return null;
 }
 
-export function validatePropertyNode (propertyNode) {
+export function validatePropertyNode(propertyNode) {
   const nodeErr = validateNode(constants.CLASS, propertyNode, [
     'uid',
     'type',
     'label',
     'description',
-    'range'
-  ])
+    'range',
+  ]);
   if (nodeErr) {
-    return nodeErr
+    return nodeErr;
   }
-  const rangeError = validateRange(propertyNode.range)
+  const rangeError = validateRange(propertyNode.range);
   if (rangeError) {
-    return rangeError
+    return rangeError;
   }
 }
 
-export function validateGraph (graph) {
+export function validateGraph(graph) {
   if (!isArray(graph)) {
-    return 'Graph must be an array of class and property nodes'
+    return 'Graph must be an array of class and property nodes';
   }
-  const classes = {}
-  const properties = {}
+  const classes = {};
+  const properties = {};
 
   for (let node of graph) {
     if (node.type === constants.CLASS) {
-      const err = validateClassNode(node)
+      const err = validateClassNode(node);
       if (err) {
-        return err
+        return err;
       }
-      const label = node.label.toLowerCase()
+      const label = node.label.toLowerCase();
       if (classes[label]) {
-        return `Class node (after becoming lowercase) is not unique: ${label}`
+        return `Class node (after becoming lowercase) is not unique: ${label}`;
       }
-      classes[label] = node
+      classes[label] = node;
     }
     else if (node.type === constants.PROPERTY) {
-      const err = validatePropertyNode(node)
+      const err = validatePropertyNode(node);
       if (err) {
-        return err
+        return err;
       }
-      const label = node.label.toLowerCase()
+      const label = node.label.toLowerCase();
       if (properties[label]) {
-        return `Property node (after becoming lowercase) is not unique: ${label}`
+        return `Property node (after becoming lowercase) is not unique: ${label}`;
       }
-      properties[label] = node
+      properties[label] = node;
     }
     else {
-      return 'Node type must be either "Class" or "Property"'
+      return 'Node type must be either "Class" or "Property"';
     }
   }
 
   /* Use resolved to prevent recursion */
-  const resolved = {}
-  const resolvePropertyRefs = function(node) {
+  const resolved = {};
+  const resolvePropertyRefs = function (node) {
     const propertyRefs = node.type === constants.CLASS
       ? node.propertyRefs
-      : node.range.propertyRefs
+      : node.range.propertyRefs;
 
     for (let propertyRef of propertyRefs) {
-      const ref = propertyRef.ref.toLowerCase()
+      const ref = propertyRef.ref.toLowerCase();
       if (resolved[ref]) {
-        continue
+        continue;
       }
-      resolved[ref] = true
-      const uidError = validateUid(ref)
+      resolved[ref] = true;
+      const uidError = validateUid(ref);
       if (!uidError) {
-        continue
+        continue;
       }
-      const property = properties[ref]
+      const property = properties[ref];
       if (!property) {
-        return `${node.type} node ${node.label} ref ${propertyRef.ref} does not exist`
+        return `${node.type} node ${node.label} ref ${propertyRef.ref} does not exist`;
       }
       if (property.range.type === constants.NESTED_OBJECT) {
-        const nestedObjectErr = resolvePropertyRefs(property)
+        const nestedObjectErr = resolvePropertyRefs(property);
         if (nestedObjectErr) {
-          return nestedObjectErr
+          return nestedObjectErr;
         }
       }
     }
-    return null
-  }
+    return null;
+  };
 
   /* Resolve propertyRefs and subClassOf for classNodes */
   for (let key of Object.keys(classes)) {
-    const classNode = classes[key]
-    const err = resolvePropertyRefs(classNode)
+    const classNode = classes[key];
+    const err = resolvePropertyRefs(classNode);
     if (err) {
-      return err
+      return err;
     }
     if (classNode.subClassOf) {
-      const subClassOf = classNode.subClassOf.toLowerCase()
-      const uidError = validateUid(subClassOf)
+      const subClassOf = classNode.subClassOf.toLowerCase();
+      const uidError = validateUid(subClassOf);
       if (!uidError) {
-        continue
+        continue;
       }
       if (!classes[subClassOf]) {
-        return `In Class ${classNode.label} could not resolve subClassOf ${classNode.subClassOf}`
+        return `In Class ${classNode.label} could not resolve subClassOf ${classNode.subClassOf}`;
       }
     }
   }
 
   /* Resolve classIds for properties with linked class range types */
   for (let key of Object.keys(properties)) {
-    const propertyNode = properties[key]
+    const propertyNode = properties[key];
     if (propertyNode.range.type === constants.LINKED_CLASS) {
-      const ref = propertyNode.range.ref.toLowerCase()
-      const uidError = validateUid(ref)
+      const ref = propertyNode.range.ref.toLowerCase();
+      const uidError = validateUid(ref);
       if (!uidError) {
-        continue
+        continue;
       }
       if (!classes[ref]) {
-        return `In property ${propertyNode.label} could not resolve ref ${propertyNode.range.ref}`
+        return `In property ${propertyNode.label} could not resolve ref ${propertyNode.range.ref}`;
       }
     }
-
   }
 
-  return null
+  return null;
 }

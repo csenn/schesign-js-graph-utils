@@ -131,4 +131,9 @@ describe('graph util functions', () => {
       expect(isMultiple).to.equal(true);
     });
   });
+  describe('print', () => {
+    it('should print propertyVariations', () => {
+      // printDesign(propertyVariations)
+    });
+  });
 });
