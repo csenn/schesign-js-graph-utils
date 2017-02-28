@@ -1,16 +1,16 @@
 import { values, isString } from 'lodash';
-import { validateGraph } from './validate'
+import { validateGraph } from './validate';
 
 import {
   NESTED_OBJECT,
   CLASS,
-  PROPERTY
+  PROPERTY,
 } from './constants';
 
 import {
   validateRange,
   validateCardinality,
-} from './validate'
+} from './validate';
 
 export function getRefFromNode(node) {
   return node.uid || node.label;
@@ -27,14 +27,13 @@ function cleanObject(obj) {
 }
 
 function getPropertyRef(propertyOrId, opts = {}) {
-
   if (!(propertyOrId instanceof PropertyNode) && !isString(propertyOrId)) {
     throw new Error('Must be an instanceof PropertyNode or a property uid');
   }
 
   const ref = propertyOrId instanceof PropertyNode
     ? getRefFromNode(propertyOrId)
-    : propertyOrId
+    : propertyOrId;
 
   /* Use either the uid or label */
   const propertyRef = { ref, cardinality: { minItems: 0, maxItems: 1 } };
@@ -90,7 +89,7 @@ export class PropertyNode extends Node {
       ? Object.assign({}, range, { propertyRefs: [] })
       : range;
 
-    const err = validateRange(nextRange);
+    const err = validateRange(nextRange, { skipUidValidation: true });
     if (err) {
       throw new Error(`Range error for property ${this.label}: ${err}`);
     }
@@ -130,12 +129,12 @@ export class ClassNode extends Node {
     super('Class', opts);
 
     if (opts.subClassOf) {
-      this.inheritsFrom(opts.subClassOf)
+      this.inheritsFrom(opts.subClassOf);
     }
 
     this.propertyRefs = [];
     this.propertyLookup = {};
-    this.excludeParentProperties = []
+    this.excludeParentProperties = [];
   }
 
   addProperty(propertyOrRef, opts) {
@@ -150,19 +149,19 @@ export class ClassNode extends Node {
     }
   }
 
-  inheritsFrom (classOrRef) {
+  inheritsFrom(classOrRef) {
     if (classOrRef instanceof ClassNode) {
-      this.subClassOf = getRefFromNode(classOrRef)
+      this.subClassOf = getRefFromNode(classOrRef);
     } else {
-      this.subClassOf = classOrRef
+      this.subClassOf = classOrRef;
     }
   }
 
-  excludeParentProperty (propertyOrRef) {
+  excludeParentProperty(propertyOrRef) {
     if (propertyOrRef instanceof PropertyNode) {
-      this.excludeParentProperties.push(getRefFromNode(propertyOrRef))
+      this.excludeParentProperties.push(getRefFromNode(propertyOrRef));
     } else {
-      this.excludeParentProperties.push(propertyOrRef)
+      this.excludeParentProperties.push(propertyOrRef);
     }
   }
 
@@ -175,7 +174,7 @@ export class ClassNode extends Node {
       propertyRefs: this.propertyRefs,
       excludeParentProperties: this.excludeParentProperties.length
         ? this.excludeParentProperties
-        : null
+        : null,
     });
   }
 }
@@ -190,8 +189,8 @@ export class Design {
       throw new Error('Must be an instanceof ClassNode');
     }
     const found = this.classes.find(classNode => {
-      return classNode.label.toLowerCase() === node.label.toLowerCase()
-    })
+      return classNode.label.toLowerCase() === node.label.toLowerCase();
+    });
     if (found) {
       throw new Error(`ClassNode has already been added ${found.label}`);
     }
@@ -220,16 +219,16 @@ export class Design {
 
     graph.sort((a, b) => {
       if (a.type !== b.type) {
-        return a.type === CLASS ? -1 : 1
+        return a.type === CLASS ? -1 : 1;
       }
-      const aLast = a.label.toLowerCase()
-      const bLast = b.label.toLowerCase()
-      return aLast > bLast ? 1 : -1
-    })
+      const aLast = a.label.toLowerCase();
+      const bLast = b.label.toLowerCase();
+      return aLast > bLast ? 1 : -1;
+    });
 
-    const err = validateGraph(graph)
+    const err = validateGraph(graph, { skipUidValidation: true });
     if (err) {
-      throw new Error(`Resulting graph is invalid: ${err}`)
+      throw new Error(`Resulting graph is invalid: ${err}`);
     }
 
     return { graph };

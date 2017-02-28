@@ -145,8 +145,17 @@ export function validateCardinality(cardinality) {
 }
 
 /* Todo: check for index, foreign, etc when added */
-export function validatePropertyRef(propertyRef) {
-  const err = validateCardinality(propertyRef.cardinality);
+export function validatePropertyRef(propertyRef, opts = {}) {
+  let err;
+  if (opts.skipUidValidation) {
+    err = isString(propertyRef.ref) ? null : 'ref is required';
+  } else {
+    err = validateClassUid(propertyRef.ref);
+  }
+  if (err) {
+    return err;
+  }
+  err = validateCardinality(propertyRef.cardinality);
   if (err) {
     return err;
   }
@@ -178,7 +187,8 @@ const dateFormats = [
 ];
 
 /* Return an error message if there is an error */
-export function validateRange(range) {
+export function validateRange(range, opts = {}) {
+  let err;
   switch (range.type) {
     case constants.BOOLEAN:
       break;
@@ -206,16 +216,21 @@ export function validateRange(range) {
       if (!isArray(range.propertyRefs)) {
         return 'Bad NestedObject Range, propertyRefs required';
       }
-      for (let ref of range.propertyRefs) {
-        const error = validateCardinality(ref.cardinality);
-        if (error) {
-          return error;
+      for (const ref of range.propertyRefs) {
+        err = validatePropertyRef(ref, opts);
+        if (err) {
+          return `Bad NestedObject Range: ${err}`;
         }
       }
       break;
     case constants.LINKED_CLASS:
-      if (!range.ref) {
-        return 'Bad LinkedClass range, ref required';
+      if (opts.skipUidValidation) {
+        err = isString(range.ref) ? null : 'ref is required';
+      } else {
+        err = validateClassUid(range.ref);
+      }
+      if (err) {
+        return `Bad LinkedClass Range ${err}`;
       }
       break;
     default:
@@ -240,7 +255,7 @@ function validateNode(type, node, allowed) {
   return null;
 }
 
-export function validateClassNode(classNode) {
+export function validateClassNode(classNode, opts = {}) {
   const nodeErr = validateNode(constants.CLASS, classNode, [
     'uid',
     'type',
@@ -256,8 +271,8 @@ export function validateClassNode(classNode) {
   if (!isArray(classNode.propertyRefs)) {
     return `Class node ${classNode.label} is missing propertyRefs`;
   }
-  for (let propertyRef of classNode.propertyRefs) {
-    const err = validatePropertyRef(propertyRef);
+  for (const propertyRef of classNode.propertyRefs) {
+    const err = validatePropertyRef(propertyRef, opts);
     if (err) {
       return `Class node ${classNode.label} has error: ${err}`;
     }
@@ -265,7 +280,7 @@ export function validateClassNode(classNode) {
   return null;
 }
 
-export function validatePropertyNode(propertyNode) {
+export function validatePropertyNode(propertyNode, opts = {}) {
   const nodeErr = validateNode(constants.CLASS, propertyNode, [
     'uid',
     'type',
@@ -276,22 +291,23 @@ export function validatePropertyNode(propertyNode) {
   if (nodeErr) {
     return nodeErr;
   }
-  const rangeError = validateRange(propertyNode.range);
+  const rangeError = validateRange(propertyNode.range, opts);
   if (rangeError) {
     return rangeError;
   }
+  return null;
 }
 
-export function validateGraph(graph) {
+export function validateGraph(graph, opts = {}) {
   if (!isArray(graph)) {
     return 'Graph must be an array of class and property nodes';
   }
   const classes = {};
   const properties = {};
 
-  for (let node of graph) {
+  for (const node of graph) {
     if (node.type === constants.CLASS) {
-      const err = validateClassNode(node);
+      const err = validateClassNode(node, opts);
       if (err) {
         return err;
       }
@@ -300,9 +316,8 @@ export function validateGraph(graph) {
         return `Class node (after becoming lowercase) is not unique: ${label}`;
       }
       classes[label] = node;
-    }
-    else if (node.type === constants.PROPERTY) {
-      const err = validatePropertyNode(node);
+    } else if (node.type === constants.PROPERTY) {
+      const err = validatePropertyNode(node, opts);
       if (err) {
         return err;
       }
@@ -311,8 +326,7 @@ export function validateGraph(graph) {
         return `Property node (after becoming lowercase) is not unique: ${label}`;
       }
       properties[label] = node;
-    }
-    else {
+    } else {
       return 'Node type must be either "Class" or "Property"';
     }
   }
@@ -324,7 +338,7 @@ export function validateGraph(graph) {
       ? node.propertyRefs
       : node.range.propertyRefs;
 
-    for (let propertyRef of propertyRefs) {
+    for (const propertyRef of propertyRefs) {
       const ref = propertyRef.ref.toLowerCase();
       if (resolved[ref]) {
         continue;
@@ -349,7 +363,7 @@ export function validateGraph(graph) {
   };
 
   /* Resolve propertyRefs and subClassOf for classNodes */
-  for (let key of Object.keys(classes)) {
+  for (const key of Object.keys(classes)) {
     const classNode = classes[key];
     const err = resolvePropertyRefs(classNode);
     if (err) {
@@ -368,7 +382,7 @@ export function validateGraph(graph) {
   }
 
   /* Resolve classIds for properties with linked class range types */
-  for (let key of Object.keys(properties)) {
+  for (const key of Object.keys(properties)) {
     const propertyNode = properties[key];
     if (propertyNode.range.type === constants.LINKED_CLASS) {
       const ref = propertyNode.range.ref.toLowerCase();

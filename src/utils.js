@@ -84,10 +84,12 @@ export function getUidType(uid) {
     throw new Error(`Bad Uid: ${uid}`);
   }
   if (reduced.classOrProperty) {
-    if (reduced.classOrProperty === 'class') {
+    if (reduced.resourceType === 'class') {
       return CLASS_UID;
+    } else if (reduced.resourceType === 'property') {
+      return PROPERTY_UID;
     }
-    return PROPERTY_UID;
+    throw new Error('resourceType must be a class or property');
   }
   if (reduced.versionLabel) {
     return VERSION_UID;
@@ -113,7 +115,7 @@ function getNodeId(node) {
   return node.uid || node.label;
 }
 
-export function printDesign(design) {
+export function printDesign(design, opts = {}) {
   const classes = [];
   const properties = {};
 
