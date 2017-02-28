@@ -1,5 +1,5 @@
 import { isNumber, isArray, isString, isFinite } from 'lodash';
-import { reduceUid, getUidType } from './utils';
+import { getUidType } from './utils';
 import * as constants from './constants';
 
 const LETTERS_NUMBERS_UNDERSCORE = /^[a-zA-Z0-9_]+$/;
@@ -38,7 +38,7 @@ export function validateVersionLabel(label) {
   if (split.length !== 3) {
     return ERROR_MESSAGE;
   }
-  for (let el of split) {
+  for (const el of split) {
     if (!isFinite(parseInt(el))) {
       return ERROR_MESSAGE;
     }
@@ -133,8 +133,6 @@ export function validatePropertyUid(uid) {
 export function validateCardinality(cardinality) {
   const err = 'Bad Cardinality. Must be in format {minItems: [num], maxItems: [num || null]}';
   if (!cardinality) {
-    return err;
-  } else if (Object.keys(cardinality).length > 2) {
     return err;
   } else if (!isNumber(cardinality.minItems)) {
     return err;
@@ -247,7 +245,7 @@ function validateNode(type, node, allowed) {
   if (labelError) {
     return labelError;
   }
-  for (let key of Object.keys(node)) {
+  for (const key of Object.keys(node)) {
     if (!allowed.includes(key)) {
       return `Class node hello should not have property: ${key}`;
     }
@@ -333,7 +331,7 @@ export function validateGraph(graph, opts = {}) {
 
   /* Use resolved to prevent recursion */
   const resolved = {};
-  const resolvePropertyRefs = function (node) {
+  const resolvePropertyRefs = node => {
     const propertyRefs = node.type === constants.CLASS
       ? node.propertyRefs
       : node.range.propertyRefs;
