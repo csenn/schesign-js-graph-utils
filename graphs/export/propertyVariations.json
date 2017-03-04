@@ -1,11 +1,32 @@
 {
+  "summary": {
+    "requestType": "VersionUid",
+    "requestUid": "https://www.schesign.com/o/tests/property_variations/master",
+    "designsAccessed": [
+      "https://www.schesign.com/o/tests/property_variations"
+    ],
+    "counts": {
+      "versions": 1,
+      "classes": 2,
+      "properties": 31
+    }
+  },
   "graph": [
     {
-      "uid": "https://www.schesign.com/o/tests/property_variations/master/class/class1",
+      "type": "Version",
+      "uid": "https://www.schesign.com/o/tests/property_variations/master",
+      "classes": [
+        "https://www.schesign.com/o/tests/property_variations/master/class/class1",
+        "https://www.schesign.com/o/tests/property_variations/master/class/class2"
+      ],
+      "readme": null
+    },
+    {
       "type": "Class",
+      "uid": "https://www.schesign.com/o/tests/property_variations/master/class/class1",
       "label": "class1",
-      "subClassOf": null,
       "description": "First Description",
+      "subClassOf": null,
       "propertyRefs": [
         {
           "ref": "https://www.schesign.com/o/tests/property_variations/master/property/a",
@@ -199,11 +220,11 @@
       ]
     },
     {
-      "uid": "https://www.schesign.com/o/tests/property_variations/master/class/class2",
       "type": "Class",
+      "uid": "https://www.schesign.com/o/tests/property_variations/master/class/class2",
       "label": "class2",
-      "subClassOf": null,
       "description": null,
+      "subClassOf": null,
       "propertyRefs": [
         {
           "ref": "https://www.schesign.com/o/tests/property_variations/master/property/y",
@@ -215,8 +236,8 @@
       ]
     },
     {
-      "uid": "https://www.schesign.com/o/tests/property_variations/master/property/a",
       "type": "Property",
+      "uid": "https://www.schesign.com/o/tests/property_variations/master/property/a",
       "label": "a",
       "description": null,
       "range": {
@@ -224,8 +245,8 @@
       }
     },
     {
-      "uid": "https://www.schesign.com/o/tests/property_variations/master/property/a1",
       "type": "Property",
+      "uid": "https://www.schesign.com/o/tests/property_variations/master/property/a1",
       "label": "a1",
       "description": null,
       "range": {
@@ -233,8 +254,8 @@
       }
     },
     {
-      "uid": "https://www.schesign.com/o/tests/property_variations/master/property/b",
       "type": "Property",
+      "uid": "https://www.schesign.com/o/tests/property_variations/master/property/b",
       "label": "b",
       "description": null,
       "range": {
@@ -242,8 +263,8 @@
       }
     },
     {
-      "uid": "https://www.schesign.com/o/tests/property_variations/master/property/c",
       "type": "Property",
+      "uid": "https://www.schesign.com/o/tests/property_variations/master/property/c",
       "label": "c",
       "description": null,
       "range": {
@@ -251,69 +272,69 @@
       }
     },
     {
-      "uid": "https://www.schesign.com/o/tests/property_variations/master/property/d",
       "type": "Property",
+      "uid": "https://www.schesign.com/o/tests/property_variations/master/property/d",
       "label": "d",
       "description": null,
       "range": {
-        "type": "Text",
-        "format": "Url"
+        "format": "Url",
+        "type": "Text"
       }
     },
     {
-      "uid": "https://www.schesign.com/o/tests/property_variations/master/property/e",
       "type": "Property",
+      "uid": "https://www.schesign.com/o/tests/property_variations/master/property/e",
       "label": "e",
       "description": null,
       "range": {
-        "type": "Text",
-        "format": "Email"
+        "format": "Email",
+        "type": "Text"
       }
     },
     {
-      "uid": "https://www.schesign.com/o/tests/property_variations/master/property/f",
       "type": "Property",
+      "uid": "https://www.schesign.com/o/tests/property_variations/master/property/f",
       "label": "f",
       "description": null,
       "range": {
-        "type": "Text",
-        "format": "Hostname"
+        "format": "Hostname",
+        "type": "Text"
       }
     },
     {
-      "uid": "https://www.schesign.com/o/tests/property_variations/master/property/g",
       "type": "Property",
+      "uid": "https://www.schesign.com/o/tests/property_variations/master/property/g",
       "label": "g",
       "description": null,
       "range": {
-        "type": "Text",
-        "regex": "[a-z]"
+        "regex": "[a-z]",
+        "type": "Text"
       }
     },
     {
-      "uid": "https://www.schesign.com/o/tests/property_variations/master/property/g1",
       "type": "Property",
+      "uid": "https://www.schesign.com/o/tests/property_variations/master/property/g1",
       "label": "g1",
       "description": null,
       "range": {
-        "type": "Text",
-        "minLength": 0
+        "minLength": 0,
+        "type": "Text"
       }
     },
     {
-      "uid": "https://www.schesign.com/o/tests/property_variations/master/property/g2",
       "type": "Property",
+      "uid": "https://www.schesign.com/o/tests/property_variations/master/property/g2",
       "label": "g2",
       "description": null,
       "range": {
-        "type": "Text",
+        "maxLength": 10,
         "minLength": 0,
-        "maxLength": 10
+        "type": "Text"
       }
     },
     {
-      "uid": "https://www.schesign.com/o/tests/property_variations/master/property/h",
       "type": "Property",
+      "uid": "https://www.schesign.com/o/tests/property_variations/master/property/h",
       "label": "h",
       "description": null,
       "range": {
@@ -321,179 +342,179 @@
       }
     },
     {
-      "uid": "https://www.schesign.com/o/tests/property_variations/master/property/i",
       "type": "Property",
+      "uid": "https://www.schesign.com/o/tests/property_variations/master/property/i",
       "label": "i",
       "description": null,
       "range": {
-        "type": "Number",
-        "format": "Int"
+        "format": "Int",
+        "type": "Number"
       }
     },
     {
-      "uid": "https://www.schesign.com/o/tests/property_variations/master/property/j",
       "type": "Property",
+      "uid": "https://www.schesign.com/o/tests/property_variations/master/property/j",
       "label": "j",
       "description": null,
       "range": {
-        "type": "Number",
-        "format": "Int8"
+        "format": "Int8",
+        "type": "Number"
       }
     },
     {
-      "uid": "https://www.schesign.com/o/tests/property_variations/master/property/k",
       "type": "Property",
+      "uid": "https://www.schesign.com/o/tests/property_variations/master/property/k",
       "label": "k",
       "description": null,
       "range": {
-        "type": "Number",
-        "format": "Int16"
+        "format": "Int16",
+        "type": "Number"
       }
     },
     {
-      "uid": "https://www.schesign.com/o/tests/property_variations/master/property/l",
       "type": "Property",
+      "uid": "https://www.schesign.com/o/tests/property_variations/master/property/l",
       "label": "l",
       "description": null,
       "range": {
-        "type": "Number",
-        "format": "Int32"
+        "format": "Int32",
+        "type": "Number"
       }
     },
     {
-      "uid": "https://www.schesign.com/o/tests/property_variations/master/property/m",
       "type": "Property",
+      "uid": "https://www.schesign.com/o/tests/property_variations/master/property/m",
       "label": "m",
       "description": null,
       "range": {
-        "type": "Number",
-        "format": "Int64"
+        "format": "Int64",
+        "type": "Number"
       }
     },
     {
-      "uid": "https://www.schesign.com/o/tests/property_variations/master/property/n",
       "type": "Property",
+      "uid": "https://www.schesign.com/o/tests/property_variations/master/property/n",
       "label": "n",
       "description": null,
       "range": {
-        "type": "Number",
-        "format": "Float32"
+        "format": "Float32",
+        "type": "Number"
       }
     },
     {
-      "uid": "https://www.schesign.com/o/tests/property_variations/master/property/o",
       "type": "Property",
+      "uid": "https://www.schesign.com/o/tests/property_variations/master/property/o",
       "label": "o",
       "description": null,
       "range": {
-        "type": "Number",
-        "format": "Float64"
+        "format": "Float64",
+        "type": "Number"
       }
     },
     {
-      "uid": "https://www.schesign.com/o/tests/property_variations/master/property/p",
       "type": "Property",
+      "uid": "https://www.schesign.com/o/tests/property_variations/master/property/p",
       "label": "p",
       "description": null,
       "range": {
-        "type": "Number",
-        "min": 0
+        "min": 0,
+        "type": "Number"
       }
     },
     {
-      "uid": "https://www.schesign.com/o/tests/property_variations/master/property/q",
       "type": "Property",
+      "uid": "https://www.schesign.com/o/tests/property_variations/master/property/q",
       "label": "q",
       "description": null,
       "range": {
-        "type": "Number",
+        "max": 10,
         "min": 0,
-        "max": 10
+        "type": "Number"
       }
     },
     {
-      "uid": "https://www.schesign.com/o/tests/property_variations/master/property/r",
       "type": "Property",
+      "uid": "https://www.schesign.com/o/tests/property_variations/master/property/r",
       "label": "r",
       "description": null,
       "range": {
-        "type": "Enum",
         "values": [
           "one",
           "two",
           3,
           4.5
-        ]
+        ],
+        "type": "Enum"
       }
     },
     {
-      "uid": "https://www.schesign.com/o/tests/property_variations/master/property/s",
       "type": "Property",
+      "uid": "https://www.schesign.com/o/tests/property_variations/master/property/s",
       "label": "s",
       "description": null,
       "range": {
-        "type": "Date",
-        "format": "DateTime"
+        "format": "DateTime",
+        "type": "Date"
       }
     },
     {
-      "uid": "https://www.schesign.com/o/tests/property_variations/master/property/s1",
       "type": "Property",
+      "uid": "https://www.schesign.com/o/tests/property_variations/master/property/s1",
       "label": "s1",
       "description": null,
       "range": {
-        "type": "Date",
-        "format": "ShortDate"
+        "format": "ShortDate",
+        "type": "Date"
       }
     },
     {
-      "uid": "https://www.schesign.com/o/tests/property_variations/master/property/s2",
       "type": "Property",
+      "uid": "https://www.schesign.com/o/tests/property_variations/master/property/s2",
       "label": "s2",
       "description": null,
       "range": {
-        "type": "Date",
-        "format": "DateTime"
+        "format": "DateTime",
+        "type": "Date"
       }
     },
     {
-      "uid": "https://www.schesign.com/o/tests/property_variations/master/property/s3",
       "type": "Property",
+      "uid": "https://www.schesign.com/o/tests/property_variations/master/property/s3",
       "label": "s3",
       "description": null,
       "range": {
-        "type": "Date",
-        "format": "Time"
+        "format": "Time",
+        "type": "Date"
       }
     },
     {
-      "uid": "https://www.schesign.com/o/tests/property_variations/master/property/t",
       "type": "Property",
+      "uid": "https://www.schesign.com/o/tests/property_variations/master/property/t",
       "label": "t",
       "description": null,
       "range": {
-        "type": "NestedObject",
         "propertyRefs": [
           {
             "ref": "https://www.schesign.com/o/tests/property_variations/master/property/u",
             "cardinality": {
-              "minItems": 0,
-              "maxItems": 1
+              "maxItems": 1,
+              "minItems": 0
             }
           },
           {
             "ref": "https://www.schesign.com/o/tests/property_variations/master/property/v",
             "cardinality": {
-              "minItems": 0,
-              "maxItems": 1
+              "maxItems": 1,
+              "minItems": 0
             }
           }
-        ]
+        ],
+        "type": "NestedObject"
       }
     },
     {
-      "uid": "https://www.schesign.com/o/tests/property_variations/master/property/u",
       "type": "Property",
+      "uid": "https://www.schesign.com/o/tests/property_variations/master/property/u",
       "label": "u",
       "description": null,
       "range": {
@@ -501,26 +522,26 @@
       }
     },
     {
-      "uid": "https://www.schesign.com/o/tests/property_variations/master/property/v",
       "type": "Property",
+      "uid": "https://www.schesign.com/o/tests/property_variations/master/property/v",
       "label": "v",
       "description": null,
       "range": {
-        "type": "NestedObject",
         "propertyRefs": [
           {
             "ref": "https://www.schesign.com/o/tests/property_variations/master/property/w",
             "cardinality": {
-              "minItems": 0,
-              "maxItems": 1
+              "maxItems": 1,
+              "minItems": 0
             }
           }
-        ]
+        ],
+        "type": "NestedObject"
       }
     },
     {
-      "uid": "https://www.schesign.com/o/tests/property_variations/master/property/w",
       "type": "Property",
+      "uid": "https://www.schesign.com/o/tests/property_variations/master/property/w",
       "label": "w",
       "description": null,
       "range": {
@@ -528,18 +549,18 @@
       }
     },
     {
-      "uid": "https://www.schesign.com/o/tests/property_variations/master/property/x",
       "type": "Property",
+      "uid": "https://www.schesign.com/o/tests/property_variations/master/property/x",
       "label": "x",
       "description": null,
       "range": {
-        "type": "LinkedClass",
-        "ref": "https://www.schesign.com/o/tests/property_variations/master/class/class2"
+        "ref": "https://www.schesign.com/o/tests/property_variations/master/class/class2",
+        "type": "LinkedClass"
       }
     },
     {
-      "uid": "https://www.schesign.com/o/tests/property_variations/master/property/y",
       "type": "Property",
+      "uid": "https://www.schesign.com/o/tests/property_variations/master/property/y",
       "label": "y",
       "description": null,
       "range": {

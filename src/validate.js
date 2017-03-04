@@ -148,7 +148,7 @@ export function validatePropertyRef(propertyRef, opts = {}) {
   if (opts.skipUidValidation) {
     err = isString(propertyRef.ref) ? null : 'ref is required';
   } else {
-    err = validateClassUid(propertyRef.ref);
+    err = validatePropertyUid(propertyRef.ref);
   }
   if (err) {
     return err;

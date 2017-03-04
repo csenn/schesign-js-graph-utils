@@ -7,17 +7,17 @@ import {
   PropertyNode,
 } from '../src/design';
 
-import createPropertyVariations from './generate/createPropertyVariations'
-import createInheritanceChain1 from './generate/createInheritanceChain1'
-import createInheritanceChain2 from './generate/createInheritanceChain2'
-import createLinkedNodes1 from './generate/createLinkedNodes1'
-import createLinkedNodes2 from './generate/createLinkedNodes2'
+import createPropertyVariations from './generate/createPropertyVariations';
+import createInheritanceChain1 from './generate/createInheritanceChain1';
+import createInheritanceChain2 from './generate/createInheritanceChain2';
+import createLinkedNodes1 from './generate/createLinkedNodes1';
+import createLinkedNodes2 from './generate/createLinkedNodes2';
 
 import propertyVariations from '../graphs/import/propertyVariations';
-import inheritanceChain1 from '../graphs/import/inheritanceChain1'
-import inheritanceChain2 from '../graphs/import/inheritanceChain2'
-import linkedNodes1 from '../graphs/import/linkedNodes1'
-import linkedNodes2 from '../graphs/import/linkedNodes2'
+import inheritanceChain1 from '../graphs/import/inheritanceChain1';
+import inheritanceChain2 from '../graphs/import/inheritanceChain2';
+import linkedNodes1 from '../graphs/import/linkedNodes1';
+import linkedNodes2 from '../graphs/import/linkedNodes2';
 
 const { describe, it } = global;
 
@@ -106,16 +106,16 @@ describe('Generating a design', () => {
       expect(createPropertyVariations).to.deep.equal(propertyVariations);
     });
     it('should output the inheritanceChain1 graph', () => {
-      expect(createInheritanceChain1).to.deep.equal(inheritanceChain1)
+      expect(createInheritanceChain1).to.deep.equal(inheritanceChain1);
     });
     it('should output the inheritanceChain2 graph', () => {
-      expect(createInheritanceChain2).to.deep.equal(inheritanceChain2)
+      expect(createInheritanceChain2).to.deep.equal(inheritanceChain2);
     });
     it('should output the linkedNodes1 graph', () => {
-      expect(createLinkedNodes1).to.deep.equal(linkedNodes1)
+      expect(createLinkedNodes1).to.deep.equal(linkedNodes1);
     });
     it('should output the linkedNodes2 graph', () => {
-      expect(createLinkedNodes2).to.deep.equal(linkedNodes2)
+      expect(createLinkedNodes2).to.deep.equal(linkedNodes2);
     });
   });
 });

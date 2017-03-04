@@ -11,6 +11,8 @@ import {
   CLASS_UID,
 } from './constants';
 
+const removeDomainFromUid = uid => uid.substring(uid.indexOf('schesign.com') + 13);
+
 /* Create a uid */
 export function createUid(reduced, short) {
   const err = validateReducedUid(reduced);
@@ -52,7 +54,7 @@ export function reduceUid(uid) {
   }
 
   const shortened = uid.indexOf('schesign.com') > -1
-    ? uid.substring(uid.indexOf('schesign.com') + 12)
+    ? removeDomainFromUid(uid)
     : uid;
 
   const parts = shortened.split('/');
@@ -162,5 +164,57 @@ export function printDesign(design, opts = {}) {
   classes.forEach(classNode => {
     console.log('\n' + colors.bold(classNode.label));
     printPropertyRefs(classNode.propertyRefs, 1, {});
+  });
+}
+
+export function shortenUid(graph) {
+  const shorten = uid => {
+    if (isString(uid) && uid.indexOf('schesign.com') > -1) {
+      return removeDomainFromUid(uid);
+    }
+    return uid;
+  };
+
+  const fixPropertyRefs = propertyRefs => {
+    return propertyRefs.map(propertyRef => {
+      return Object.assign({}, propertyRef, {
+        ref: shorten(propertyRef.ref),
+      });
+    });
+  };
+
+  const fixRange = range => {
+    if (range.type === 'LinkedClass') {
+      return Object.assign({}, range, {
+        ref: shorten(range.ref),
+      });
+    } else if (range.type === 'NestedObject') {
+      return Object.assign({}, range, {
+        propertyRefs: fixPropertyRefs(range.propertyRefs),
+      });
+    }
+    return Object.assign({}, range);
+  };
+
+  return graph.map(node => {
+    if (node.type === 'Class') {
+      return Object.assign({}, node, {
+        uid: shorten(node.uid),
+        subClassOf: shorten(node.subClassOf),
+        excludeParentProperties: node.excludeParentProperties.map(shorten),
+        propertyRefs: fixPropertyRefs(node.propertyRefs),
+      });
+    } else if (node.type === 'Property') {
+      return Object.assign({}, node, {
+        uid: shorten(node.uid),
+        range: fixRange(node.range),
+      });
+    } else if (node.type === 'Version') {
+      return Object.assign({}, node, {
+        uid: shorten(node.uid),
+        classes: node.classes.map(shorten),
+      });
+    }
+    return null;
   });
 }

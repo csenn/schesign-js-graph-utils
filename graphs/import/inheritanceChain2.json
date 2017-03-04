@@ -3,7 +3,7 @@
     {
       "type": "Class",
       "label": "class4",
-      "subClassOf": "https://www.schesign.com/o/tests/inheritance_chain_1/master/class/class3",
+      "subClassOf": "https://www.schesign.com/o/tests/inheritance_chain_1/0.1.0/class/class3",
       "propertyRefs": [
         { "ref": "d",  "cardinality": { "minItems": 0, "maxItems": 1 } },
         { "ref": "a",  "cardinality": { "minItems": 0, "maxItems": 1 } }

@@ -16,7 +16,7 @@ class4.addProperty(propD);
 class4.addProperty(propA);
 class5.addProperty(propE);
 
-class4.inheritsFrom('https://www.schesign.com/o/tests/inheritance_chain_1/master/class/class3');
+class4.inheritsFrom('https://www.schesign.com/o/tests/inheritance_chain_1/0.1.0/class/class3');
 class5.inheritsFrom(class4);
 
 design.addClass(class4);

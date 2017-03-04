@@ -3,6 +3,7 @@ import {
   createUid,
   isRequiredCardinality,
   isMultipleCardinality,
+  shortenUid,
 } from '../src/utils';
 
 const { describe, it } = global;
@@ -134,6 +135,123 @@ describe('graph util functions', () => {
   describe('print', () => {
     it('should print propertyVariations', () => {
       // printDesign(propertyVariations)
+    });
+  });
+  describe('shortenUid', () => {
+    it('should shorten uids in graph', () => {
+      const before = [
+        {
+          type: 'Version',
+          uid: 'https://www.schesign.com/o/tests/d/1.0.0',
+          classes: [
+            'https://www.schesign.com/o/tests/d/1.0.0/class/class1',
+            'https://www.schesign.com/o/tests/d/1.0.0/class/class1',
+          ],
+          readme: null,
+        },
+        {
+          type: 'Class',
+          uid: 'https://www.schesign.com/o/tests/d/1.0.0/class/class1',
+          label: 'class1',
+          description: null,
+          subClassOf: 'https://www.schesign.com/o/tests/d/1.0.0/class/class1',
+          excludeParentProperties: [
+            'https://www.schesign.com/o/tests/d/1.0.0/property/prop1',
+          ],
+          propertyRefs: [
+            {
+              ref: 'https://www.schesign.com/o/tests/d/1.0.0/property/prop1',
+              cardinality: {
+                minItems: 0,
+                maxItems: 1,
+              },
+            },
+          ],
+        },
+        {
+          type: 'Property',
+          uid: 'https://www.schesign.com/o/tests/d/1.0.0/property/prop1',
+          label: 'e',
+          range: {
+            type: 'LinkedClass',
+            ref: 'https://www.schesign.com/o/tests/d/1.0.0/class/class1',
+          },
+        },
+        {
+          type: 'Property',
+          uid: 'https://www.schesign.com/o/tests/d/1.0.0/property/prop1',
+          label: 'e',
+          range: {
+            type: 'NestedObject',
+            propertyRefs: [
+              {
+                ref: 'https://www.schesign.com/o/tests/d/1.0.0/property/prop1',
+                cardinality: {
+                  minItems: 0,
+                  maxItems: 1,
+                },
+              },
+            ],
+          },
+        },
+      ];
+      const after = [
+        {
+          type: 'Version',
+          uid: 'o/tests/d/1.0.0',
+          classes: [
+            'o/tests/d/1.0.0/class/class1',
+            'o/tests/d/1.0.0/class/class1',
+          ],
+          readme: null,
+        },
+        {
+          type: 'Class',
+          uid: 'o/tests/d/1.0.0/class/class1',
+          label: 'class1',
+          description: null,
+          subClassOf: 'o/tests/d/1.0.0/class/class1',
+          excludeParentProperties: [
+            'o/tests/d/1.0.0/property/prop1',
+          ],
+          propertyRefs: [
+            {
+              ref: 'o/tests/d/1.0.0/property/prop1',
+              cardinality: {
+                minItems: 0,
+                maxItems: 1,
+              },
+            },
+          ],
+        },
+        {
+          type: 'Property',
+          uid: 'o/tests/d/1.0.0/property/prop1',
+          label: 'e',
+          range: {
+            type: 'LinkedClass',
+            ref: 'o/tests/d/1.0.0/class/class1',
+          },
+        },
+        {
+          type: 'Property',
+          uid: 'o/tests/d/1.0.0/property/prop1',
+          label: 'e',
+          range: {
+            type: 'NestedObject',
+            propertyRefs: [
+              {
+                ref: 'o/tests/d/1.0.0/property/prop1',
+                cardinality: {
+                  minItems: 0,
+                  maxItems: 1,
+                },
+              },
+            ],
+          },
+        },
+      ];
+      expect(shortenUid(before)).to.deep.equal(after);
     });
   });
 });

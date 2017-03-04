@@ -1,102 +1,128 @@
 {
+  "summary": {
+    "requestType": "VersionUid",
+    "requestUid": "https://www.schesign.com/o/tests/inheritance_chain_2/master",
+    "designsAccessed": [
+      "https://www.schesign.com/o/tests/inheritance_chain_2",
+      "https://www.schesign.com/o/tests/inheritance_chain_1"
+    ],
+    "counts": {
+      "versions": 1,
+      "classes": 5,
+      "properties": 7
+    }
+  },
   "graph": [
     {
-      "uid": "https://www.schesign.com/o/tests/inheritance_chain_1/master/class/class1",
+      "type": "Version",
+      "uid": "https://www.schesign.com/o/tests/inheritance_chain_2/master",
+      "classes": [
+        "https://www.schesign.com/o/tests/inheritance_chain_2/master/class/class4",
+        "https://www.schesign.com/o/tests/inheritance_chain_2/master/class/class5"
+      ],
+      "readme": null
+    },
+    {
       "type": "Class",
+      "uid": "https://www.schesign.com/o/tests/inheritance_chain_1/0.1.0/class/class1",
       "label": "class1",
-      "subClassOf": null,
       "description": null,
+      "subClassOf": null,
       "propertyRefs": [
         {
+          "ref": "https://www.schesign.com/o/tests/inheritance_chain_1/0.1.0/property/a",
           "cardinality": {
-            "maxItems": 1,
-            "minItems": 0
-          },
-          "ref": "https://www.schesign.com/o/tests/inheritance_chain_1/master/property/a"
+            "minItems": 0,
+            "maxItems": 1
+          }
         },
         {
+          "ref": "https://www.schesign.com/o/tests/inheritance_chain_1/0.1.0/property/a1",
           "cardinality": {
-            "maxItems": 1,
-            "minItems": 0
-          },
-          "ref": "https://www.schesign.com/o/tests/inheritance_chain_1/master/property/a1"
+            "minItems": 0,
+            "maxItems": 1
+          }
         }
       ]
     },
     {
-      "uid": "https://www.schesign.com/o/tests/inheritance_chain_1/master/class/class2",
       "type": "Class",
+      "uid": "https://www.schesign.com/o/tests/inheritance_chain_1/0.1.0/class/class2",
       "label": "class2",
       "description": null,
-      "subClassOf": "https://www.schesign.com/o/tests/inheritance_chain_1/master/class/class1",
+      "subClassOf": "https://www.schesign.com/o/tests/inheritance_chain_1/0.1.0/class/class1",
       "propertyRefs": [
         {
+          "ref": "https://www.schesign.com/o/tests/inheritance_chain_1/0.1.0/property/b",
           "cardinality": {
-            "maxItems": 1,
-            "minItems": 0
-          },
-          "ref": "https://www.schesign.com/o/tests/inheritance_chain_1/master/property/b"
+            "minItems": 0,
+            "maxItems": 1
+          }
         }
-      ]
+      ],
+      "excludeParentProperties": []
     },
     {
-      "uid": "https://www.schesign.com/o/tests/inheritance_chain_1/master/class/class3",
       "type": "Class",
+      "uid": "https://www.schesign.com/o/tests/inheritance_chain_1/0.1.0/class/class3",
       "label": "class3",
       "description": null,
-      "subClassOf": "https://www.schesign.com/o/tests/inheritance_chain_1/master/class/class2",
+      "subClassOf": "https://www.schesign.com/o/tests/inheritance_chain_1/0.1.0/class/class2",
       "propertyRefs": [
         {
+          "ref": "https://www.schesign.com/o/tests/inheritance_chain_1/0.1.0/property/c",
           "cardinality": {
-            "maxItems": 1,
-            "minItems": 0
-          },
-          "ref": "https://www.schesign.com/o/tests/inheritance_chain_1/master/property/c"
+            "minItems": 0,
+            "maxItems": 1
+          }
         }
-      ]
+      ],
+      "excludeParentProperties": []
     },
     {
-      "uid": "https://www.schesign.com/o/tests/inheritance_chain_2/master/class/class4",
       "type": "Class",
+      "uid": "https://www.schesign.com/o/tests/inheritance_chain_2/master/class/class4",
       "label": "class4",
       "description": null,
-      "subClassOf": "https://www.schesign.com/o/tests/inheritance_chain_1/master/class/class3",
+      "subClassOf": "https://www.schesign.com/o/tests/inheritance_chain_1/0.1.0/class/class3",
       "propertyRefs": [
         {
+          "ref": "https://www.schesign.com/o/tests/inheritance_chain_2/master/property/d",
           "cardinality": {
-            "maxItems": 1,
-            "minItems": 0
-          },
-          "ref": "https://www.schesign.com/o/tests/inheritance_chain_2/master/property/d"
+            "minItems": 0,
+            "maxItems": 1
+          }
         },
         {
+          "ref": "https://www.schesign.com/o/tests/inheritance_chain_2/master/property/a",
           "cardinality": {
-            "maxItems": 1,
-            "minItems": 0
-          },
-          "ref": "https://www.schesign.com/o/tests/inheritance_chain_2/master/property/a"
+            "minItems": 0,
+            "maxItems": 1
+          }
         }
-      ]
+      ],
+      "excludeParentProperties": []
     },
     {
-      "uid": "https://www.schesign.com/o/tests/inheritance_chain_2/master/class/class5",
       "type": "Class",
+      "uid": "https://www.schesign.com/o/tests/inheritance_chain_2/master/class/class5",
+      "label": "class5",
       "description": null,
       "subClassOf": "https://www.schesign.com/o/tests/inheritance_chain_2/master/class/class4",
-      "label": "class5",
       "propertyRefs": [
         {
+          "ref": "https://www.schesign.com/o/tests/inheritance_chain_2/master/property/e",
           "cardinality": {
-            "maxItems": 1,
-            "minItems": 0
-          },
-          "ref": "https://www.schesign.com/o/tests/inheritance_chain_2/master/property/e"
+            "minItems": 0,
+            "maxItems": 1
+          }
         }
-      ]
+      ],
+      "excludeParentProperties": []
     },
     {
-      "uid": "https://www.schesign.com/o/tests/inheritance_chain_1/master/property/a",
       "type": "Property",
+      "uid": "https://www.schesign.com/o/tests/inheritance_chain_1/0.1.0/property/a",
       "label": "a",
       "description": null,
       "range": {
@@ -104,8 +130,8 @@
       }
     },
     {
-      "uid": "https://www.schesign.com/o/tests/inheritance_chain_2/master/property/a",
       "type": "Property",
+      "uid": "https://www.schesign.com/o/tests/inheritance_chain_2/master/property/a",
       "label": "a",
       "description": null,
       "range": {
@@ -113,8 +139,8 @@
       }
     },
     {
-      "uid": "https://www.schesign.com/o/tests/inheritance_chain_1/master/property/a1",
       "type": "Property",
+      "uid": "https://www.schesign.com/o/tests/inheritance_chain_1/0.1.0/property/a1",
       "label": "a1",
       "description": null,
       "range": {
@@ -122,8 +148,8 @@
       }
     },
     {
-      "uid": "https://www.schesign.com/o/tests/inheritance_chain_1/master/property/b",
       "type": "Property",
+      "uid": "https://www.schesign.com/o/tests/inheritance_chain_1/0.1.0/property/b",
       "label": "b",
       "description": null,
       "range": {
@@ -131,8 +157,8 @@
       }
     },
     {
-      "uid": "https://www.schesign.com/o/tests/inheritance_chain_1/master/property/c",
       "type": "Property",
+      "uid": "https://www.schesign.com/o/tests/inheritance_chain_1/0.1.0/property/c",
       "label": "c",
       "description": null,
       "range": {
@@ -140,8 +166,8 @@
       }
     },
     {
-      "uid": "https://www.schesign.com/o/tests/inheritance_chain_2/master/property/d",
       "type": "Property",
+      "uid": "https://www.schesign.com/o/tests/inheritance_chain_2/master/property/d",
       "label": "d",
       "description": null,
       "range": {
@@ -149,8 +175,8 @@
       }
     },
     {
-      "uid": "https://www.schesign.com/o/tests/inheritance_chain_2/master/property/e",
       "type": "Property",
+      "uid": "https://www.schesign.com/o/tests/inheritance_chain_2/master/property/e",
       "label": "e",
       "description": null,
       "range": {
