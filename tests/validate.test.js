@@ -49,7 +49,7 @@ describe('graph validation functions', () => {
         { label: 'hello', propertyRefs: [{ ref: 'one', cardinality: {} }] },
         { skipUidValidation: true }
       );
-      expect(err).to.equal('Class node hello has error: Bad Cardinality. Must be in format {minItems: [num], maxItems: [num || null]}');
+      expect(err).to.equal('Class node hello has error: Bad NestedObject Range: Bad Cardinality. Must be in format {minItems: [num], maxItems: [num || null]}');
     });
   });
   describe('validatePropertyNode()', () => {

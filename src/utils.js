@@ -201,7 +201,7 @@ export function shortenUid(graph) {
       return Object.assign({}, node, {
         uid: shorten(node.uid),
         subClassOf: shorten(node.subClassOf),
-        excludeParentProperties: node.excludeParentProperties.map(shorten),
+        excludeParentProperties: node.excludeParentProperties && node.excludeParentProperties.map(shorten),
         propertyRefs: fixPropertyRefs(node.propertyRefs),
       });
     } else if (node.type === 'Property') {

@@ -160,6 +160,21 @@ export function validatePropertyRef(propertyRef, opts = {}) {
   return null;
 }
 
+export function validatePropertyRefs(propertyRefs, opts = {}) {
+  const found = {};
+  for (const propertyRef of propertyRefs) {
+    if (found[propertyRef.ref]) {
+      return `Property ref was repeated: ${propertyRef.ref}`;
+    }
+    found[propertyRef.ref] = true;
+    const err = validatePropertyRef(propertyRef, opts);
+    if (err) {
+      return `Bad NestedObject Range: ${err}`;
+    }
+  }
+  return null;
+}
+
 /* Range Helpers */
 const textFormats = [
   constants.TEXT_URL,
@@ -214,11 +229,9 @@ export function validateRange(range, opts = {}) {
       if (!isArray(range.propertyRefs)) {
         return 'Bad NestedObject Range, propertyRefs required';
       }
-      for (const ref of range.propertyRefs) {
-        err = validatePropertyRef(ref, opts);
-        if (err) {
-          return `Bad NestedObject Range: ${err}`;
-        }
+      err = validatePropertyRefs(range.propertyRefs, opts);
+      if (err) {
+        return `Bad NestedObject Range: ${err}`;
       }
       break;
     case constants.LINKED_CLASS:
@@ -247,7 +260,7 @@ function validateNode(type, node, allowed) {
   }
   for (const key of Object.keys(node)) {
     if (!allowed.includes(key)) {
-      return `Class node hello should not have property: ${key}`;
+      return `${type} node ${node.label} should not have property: ${key}`;
     }
   }
   return null;
@@ -269,11 +282,9 @@ export function validateClassNode(classNode, opts = {}) {
   if (!isArray(classNode.propertyRefs)) {
     return `Class node ${classNode.label} is missing propertyRefs`;
   }
-  for (const propertyRef of classNode.propertyRefs) {
-    const err = validatePropertyRef(propertyRef, opts);
-    if (err) {
-      return `Class node ${classNode.label} has error: ${err}`;
-    }
+  const err = validatePropertyRefs(classNode.propertyRefs, opts);
+  if (err) {
+    return `Class node ${classNode.label} has error: ${err}`;
   }
   return null;
 }

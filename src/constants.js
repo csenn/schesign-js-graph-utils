@@ -1,7 +1,7 @@
 
 /* Resource types */
-export const CLASS = 'Class'
-export const PROPERTY = 'Property'
+export const CLASS = 'Class';
+export const PROPERTY = 'Property';
 
 /* Types other then primitives */
 export const LINKED_CLASS = 'LinkedClass';
@@ -33,9 +33,9 @@ export const NUMBER_FLOAT_32 = 'Float32';
 export const NUMBER_FLOAT_64 = 'Float64';
 
 /* Uid Types */
-export const USER_UID = 'UserUid'
-export const ORGANIZATION_UID = 'OrganizationUid'
-export const DESIGN_UID = 'DesignUid'
-export const VERSION_UID = 'VersionUid'
-export const PROPERTY_UID = 'PropertyUid'
-export const CLASS_UID = 'ClassUid'
+export const USER_UID = 'UserUid';
+export const ORGANIZATION_UID = 'OrganizationUid';
+export const DESIGN_UID = 'DesignUid';
+export const VERSION_UID = 'VersionUid';
+export const PROPERTY_UID = 'PropertyUid';
+export const CLASS_UID = 'ClassUid';

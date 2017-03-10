@@ -4,7 +4,10 @@ import {
   isRequiredCardinality,
   isMultipleCardinality,
   shortenUid,
+  printDesign,
 } from '../src/utils';
+
+import propertyVariations from '../graphs/import/propertyVariations';
 
 const { describe, it } = global;
 
@@ -134,7 +137,7 @@ describe('graph util functions', () => {
   });
   describe('print', () => {
     it('should print propertyVariations', () => {
-      // printDesign(propertyVariations)
+      printDesign(propertyVariations);
     });
   });
   describe('shortenUid', () => {
