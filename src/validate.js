@@ -266,6 +266,13 @@ function validateNode(type, node, allowed) {
   return null;
 }
 
+export function validateVersionNode(versionNode, opts = {}) {
+  if (!isArray(versionNode.classes)) {
+    return `Class node ${versionNode.label} is missing classes`;
+  }
+  return null;
+}
+
 export function validateClassNode(classNode, opts = {}) {
   const nodeErr = validateNode(constants.CLASS, classNode, [
     'uid',
@@ -315,7 +322,12 @@ export function validateGraph(graph, opts = {}) {
   const properties = {};
 
   for (const node of graph) {
-    if (node.type === constants.CLASS) {
+    if (node.type === constants.VERSION) {
+      const err = validateVersionNode(node, opts);
+      if (err) {
+        return err;
+      }
+    } else if (node.type === constants.CLASS) {
       const err = validateClassNode(node, opts);
       if (err) {
         return err;
@@ -336,7 +348,7 @@ export function validateGraph(graph, opts = {}) {
       }
       properties[label] = node;
     } else {
-      return 'Node type must be either "Class" or "Property"';
+      return 'Node type must be either "Version", "Class", or "Property"';
     }
   }
 

@@ -162,7 +162,11 @@ export function printDesign(design, opts = {}) {
   }
 
   classes.forEach(classNode => {
-    console.log('\n' + colors.bold(classNode.label));
+    let classLabel = '\n' + colors.bold(classNode.label);
+    if (classNode.subClassOf) {
+      classLabel += ' inhertis from ' + colors.magenta(classNode.subClassOf);
+    }
+    console.log(classLabel);
     printPropertyRefs(classNode.propertyRefs, 1, {});
   });
 }
@@ -175,7 +179,7 @@ export function shortenUid(graph) {
     return uid;
   };
 
-  const fixPropertyRefs = propertyRefs => {
+  const fixPropertyRefs = (propertyRefs = []) => {
     return propertyRefs.map(propertyRef => {
       return Object.assign({}, propertyRef, {
         ref: shorten(propertyRef.ref),

@@ -1,5 +1,4 @@
 import { values, isString } from 'lodash';
-import { validateGraph } from './validate';
 
 import {
   NESTED_OBJECT,
@@ -8,6 +7,7 @@ import {
 } from './constants';
 
 import {
+  validateGraph,
   validateRange,
   validateCardinality,
 } from './validate';
@@ -208,9 +208,18 @@ export class Design {
       }
     };
 
-    const graph = this.classes.map(node => {
+
+    const graph = [
+      {
+        type: 'Version',
+        label: 'master',
+        classes: this.classes.map(classItem => classItem.label),
+      },
+    ];
+
+    this.classes.map(node => {
       values(node.propertyLookup).forEach(addUniqueProperty);
-      return node.toJSON();
+      graph.push(node.toJSON());
     });
 
     values(properties).forEach(node => {

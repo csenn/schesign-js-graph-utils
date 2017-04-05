@@ -1,5 +1,6 @@
 
 /* Resource types */
+export const VERSION = 'Version';
 export const CLASS = 'Class';
 export const PROPERTY = 'Property';
 

@@ -1,6 +1,14 @@
 {
   "graph": [
     {
+      "type": "Version",
+      "label": "master",
+      "classes": [
+        "class4",
+        "class5"
+      ]
+    },
+    {
       "type": "Class",
       "label": "class4",
       "subClassOf": "https://www.schesign.com/o/tests/inheritance_chain_1/0.1.0/class/class3",
