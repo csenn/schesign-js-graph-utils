@@ -1,14 +1,6 @@
 {
    "graph": [
     {
-      "type": "Version",
-      "label": "master",
-      "classes": [
-        "class1",
-        "class2"
-      ]
-    },
-    {
       "type": "Class",
       "label": "class1",
       "propertyRefs": [

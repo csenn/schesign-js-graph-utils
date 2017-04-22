@@ -210,14 +210,14 @@ export class Design {
 
 
     const graph = [
-      {
-        type: 'Version',
-        label: 'master',
-        classes: this.classes.map(classItem => classItem.label),
-      },
+      // {
+      //   type: 'Version',
+      //   label: 'master',
+      //   classes: this.classes.map(classItem => classItem.label),
+      // },
     ];
 
-    this.classes.map(node => {
+    this.classes.forEach(node => {
       values(node.propertyLookup).forEach(addUniqueProperty);
       graph.push(node.toJSON());
     });

@@ -216,7 +216,8 @@ export function shortenUid(graph) {
     } else if (node.type === 'Version') {
       return Object.assign({}, node, {
         uid: shorten(node.uid),
-        classes: node.classes.map(shorten),
+        classes: node.classes && node.classes.map(shorten),
+        properties: node.properties && node.properties.map(shorten),
       });
     }
     return null;
