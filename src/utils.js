@@ -14,7 +14,7 @@ import {
 const removeDomainFromUid = uid => uid.substring(uid.indexOf('schesign.com') + 13);
 
 /* Create a uid */
-export function createUid(reduced, short) {
+export function createUid(reduced, long) {
   const err = validateReducedUid(reduced);
   if (err) {
     throw new Error(err);
@@ -43,9 +43,9 @@ export function createUid(reduced, short) {
 
   path = path.toLowerCase();
 
-  return short
-    ? path
-    : `https://www.schesign.com/${path}`;
+  return long
+    ? `https://www.schesign.com/${path}`
+    : path;
 }
 
 export function reduceUid(uid) {
