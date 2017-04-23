@@ -79,6 +79,18 @@ export function reduceUid(uid) {
   return result;
 }
 
+export function areFromSameDesign(uidA, uidB) {
+  const reducedA = reduceUid(uidA);
+  const redcuedB = reduceUid(uidB);
+
+  return reducedA.ownerType
+    && reducedA.userOrOrg
+    && reducedA.designName
+    && reducedA.ownerType === redcuedB.ownerType
+    && reducedA.userOrOrg === redcuedB.userOrOrg
+    && reducedA.designName === redcuedB.designName;
+}
+
 export function getUidType(uid) {
   const reduced = reduceUid(uid);
   const err = validateReducedUid(reduced);
