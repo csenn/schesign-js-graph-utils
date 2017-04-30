@@ -7,7 +7,7 @@ import {
   printDesign
 } from '../src/utils'
 
-import propertyVariations from '../graphs/import/propertyVariations'
+import propertyVariations from 'schesign-graph-examples/graphs/import/propertyVariations'
 
 const { describe, it } = global
 

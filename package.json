@@ -1,6 +1,6 @@
 {
   "name": "schesign-js-graph-utils",
-  "version": "0.1.15",
+  "version": "0.1.16",
   "license": "MIT",
   "description": "Helpers to build and use a schesign graph",
   "repository": {
@@ -23,11 +23,11 @@
     "chai": "^3.5.0",
     "mocha": "^2.4.5",
     "rimraf": "^2.5.2",
+    "schesign-graph-examples": "0.0.1",
     "standard": "^10.0.2"
   },
   "dependencies": {
     "colors": "^1.1.2",
-    "lodash": "^4.17.4",
-    "schesign-graph-examples": "0.0.1"
+    "lodash": "^4.17.4"
   }
 }

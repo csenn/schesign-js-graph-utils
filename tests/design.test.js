@@ -13,11 +13,11 @@ import createInheritanceChain2 from './generate/createInheritanceChain2'
 import createLinkedNodes1 from './generate/createLinkedNodes1'
 import createLinkedNodes2 from './generate/createLinkedNodes2'
 
-import propertyVariations from '../graphs/import/propertyVariations'
-import inheritanceChain1 from '../graphs/import/inheritanceChain1'
-import inheritanceChain2 from '../graphs/import/inheritanceChain2'
-import linkedNodes1 from '../graphs/import/linkedNodes1'
-import linkedNodes2 from '../graphs/import/linkedNodes2'
+import propertyVariations from 'schesign-graph-examples/graphs/import/propertyVariations'
+import inheritanceChain1 from 'schesign-graph-examples/graphs/import/inheritanceChain1'
+import inheritanceChain2 from 'schesign-graph-examples/graphs/import/inheritanceChain2'
+import linkedNodes1 from 'schesign-graph-examples/graphs/import/linkedNodes1'
+import linkedNodes2 from 'schesign-graph-examples/graphs/import/linkedNodes2'
 
 const { describe, it } = global
 
