@@ -111,7 +111,7 @@ describe('validate/graph', () => {
       [{type: 'Class', awesome: 'a'}, 'awesome is invalid. Must be one of: type, label, description, subClassOf, propertySpecs, excludeParentProperties'],
       [{type: 'Class', range: 'a'}, 'range is invalid. Must be one of: type, label, description, subClassOf, propertySpecs, excludeParentProperties'],
       [{type: 'Class'}, 'label must be a string'],
-      [{type: 'Class', label: 'a a'}, 'label.a a can only have letters, numbers, or underscores'],
+      [{type: 'Class', label: 'a a'}, 'label "a a" can only have letters, numbers, or underscores'],
       [{type: 'Class', label: 'a', description: 3}, 'description must be a string'],
       [{type: 'Class', label: 'a', subClassOf: 3}, 'subClassOf must be a string'],
       [{type: 'Class', label: 'a', propertySpecs: 'sdsd'}, 'propertySpecs[0].ref is required'],
@@ -137,7 +137,7 @@ describe('validate/graph', () => {
       [{fish: 'Property'}, 'type must be "Property"'],
       [{type: 'Property', awesome: 'a a'}, 'awesome is invalid. Must be one of: type, label, description, propertySpecs, range'],
       [{type: 'Property'}, 'label must be a string'],
-      [{type: 'Property', label: 'a a'}, 'label.a a can only have letters, numbers, or underscores'],
+      [{type: 'Property', label: 'a a'}, 'label "a a" can only have letters, numbers, or underscores'],
       [{type: 'Property', label: 'hello'}, 'range is required'],
       [{type: 'Property', label: 'a', description: 3}, 'description must be a string'],
       [{type: 'Property', label: 'a', range: 4}, 'type is required']
@@ -152,363 +152,97 @@ describe('validate/graph', () => {
     success.forEach(elem => _validate(validatePropertyNode, elem, null))
   })
 
-  describe.skip('validateGraph()', () => {
-    it('should fail when an array is not passed in', () => {
-      const err = validateGraph({})
-      expect(err).to.equal('Graph must be an array of class and property nodes')
-    })
-
-    it('should fail if a bad node type is passed in', () => {
-      const err = validateGraph([
-        { type: 'hello' }
-
-      ])
-      expect(err).to.equal('Node type must be either "Class" or "Property"')
-    })
-
-    it('should fail when class labels are duplicated', () => {
-      const graph = [
-        {
-          type: 'Class',
-          label: 'class1',
-          propertyRefs: [{ ref: 'one', cardinality: { minItems: 0, maxItems: 1 } }]
-        },
-        {
-          type: 'Class',
-          label: 'class1',
-          propertyRefs: [{ ref: 'one', cardinality: { minItems: 0, maxItems: 1 } }]
-        }
+  describe('validateGraph()', () => {
+    const fail = [
+      [{}, 'Graph must be an array of class and property nodes'],
+      [[{type: 'hello'}], 'graph[0].type must be "Class" or "Property"'],
+      [
+        [{type: 'Class', label: null}],
+        'graph[0].label must be a string'
+      ],
+      [
+        [{type: 'Class', label: 'a A'}],
+        'Class.a A.label "a A" can only have letters, numbers, or underscores'
+      ],
+      [
+        [{type: 'Property', label: null}],
+        'graph[0].label must be a string'
+      ],
+      [
+        [{type: 'Property', label: 'a'}],
+        'Property.a.range is required'
+      ],
+      [
+        [{type: 'Class', label: 'a'}, {type: 'Class', label: 'A'}],
+        'Class.A.label "A" is not unique (case insensitive)'
+      ],
+      [
+        [{type: 'Property', label: 'a', range: {type: 'Text'}}, {type: 'Property', label: 'A', range: {type: 'Text'}}],
+        'Property.A.label "A" is not unique (case insensitive)'
+      ],
+      [
+        [{type: 'Class', label: 'a', subClassOf: 'b'}],
+        'Class.a.subClassOf "b" has not been declared as a Class'
+      ],
+      [
+        [{type: 'Class', label: 'a', propertySpecs: [{ref: 'b'}]}],
+        'Class.a.propertySpecs[0].ref "b" has not been declared as a Property'
+      ],
+      [
+        [{type: 'Property', label: 'a', range: { type: 'NestedObject', propertySpecs: [{ref: 'b'}] }}],
+        'Property.a.propertySpecs[0].ref "b" has not been declared as a Property'
+      ],
+      [
+        [{type: 'Property', label: 'a', range: { type: 'LinkedClass', ref: 'b' }}],
+        'Property.a.range.ref "b" has not been declared as a Class'
+      ],
+      [
+        [{type: 'Class', label: 'a', propertySpecs: [{ref: 'u/user_a/design_a'}]}],
+        'Class.a.propertySpecs[0].ref u/user_a/design_a uid is not of type "PropertyUid"'
+      ],
+      [
+        [{type: 'Class', label: 'a', propertySpecs: [{ref: 'u/user_a/design_a/master/property/a'}]}],
+        'Class.a.propertySpecs[0].ref u/user_a/design_a/master/property/a should not reference a master version'
+      ],
+      [
+        [{type: 'Class', label: 'a', propertySpecs: [{ref: 'u/user_a/design_a/master/class/class1'}]}],
+        'Class.a.propertySpecs[0].ref u/user_a/design_a/master/class/class1 uid is not of type "PropertyUid"'
       ]
-      const err = validateGraph(graph)
-      expect(err).to.equal('Class node (after becoming lowercase) is not unique: class1')
-    })
+    ]
 
-    it('should fail when class labels are duplicated (case insensitive)', () => {
-      const graph = [
-        {
-          type: 'Class',
-          label: 'class1',
-          propertyRefs: [{ ref: 'one', cardinality: { minItems: 0, maxItems: 1 } }]
-        },
-        {
-          type: 'Class',
-          label: 'Class1',
-          propertyRefs: [{ ref: 'one', cardinality: { minItems: 0, maxItems: 1 } }]
-        }
+    const success = [
+      // Property Spec
+      [
+        {type: 'Class', label: 'a', propertySpecs: [{ref: 'a'}]},
+        {type: 'Property', label: 'a', range: {type: 'Text'}}
+      ],
+      // uid
+      [
+        {type: 'Class', label: 'a', propertySpecs: [{ref: 'u/user_a/design_a/1.0.0/property/s'}]}
+      ],
+      // SubClassOf
+      [
+        {type: 'Class', label: 'A', subClassOf: 'B'},
+        {type: 'Class', label: 'B'}
+      ],
+      // LinkedClass
+      [
+        {type: 'Class', label: 'A', propertySpecs: []},
+        {type: 'Property', label: 'a', range: {type: 'LinkedClass', ref: 'A'}}
+      ],
+      // NestedObject
+      [
+        {type: 'Property', label: 'a', range: {type: 'NestedObject', propertySpecs: [{ref: 'b'}]}},
+        {type: 'Property', label: 'b', range: {type: 'Text'}}
+      ],
+      // Recursion
+      [
+        {type: 'Property', label: 'a', range: {type: 'NestedObject', propertySpecs: [{ref: 'a'}]}}
       ]
-      const err = validateGraph(graph)
-      expect(err).to.equal('Class node (after becoming lowercase) is not unique: class1')
-    })
 
-    it('should fail when property labels are duplicated', () => {
-      const graph = [
-        {
-          type: 'Property',
-          label: 'property1',
-          range: { type: 'Text' }
-        },
-        {
-          type: 'Property',
-          label: 'property1',
-          range: { type: 'Text' }
-        }
-      ]
-      const err = validateGraph(graph)
-      expect(err).to.equal('Property node (after becoming lowercase) is not unique: property1')
-    })
+    ]
 
-    it('should fail when property labels are duplicated (case insensitive)', () => {
-      const graph = [
-        {
-          type: 'Property',
-          label: 'property1',
-          range: { type: 'Text' }
-        },
-        {
-          type: 'Property',
-          label: 'Property1',
-          range: { type: 'Text' }
-        }
-      ]
-      const err = validateGraph(graph)
-      expect(err).to.equal('Property node (after becoming lowercase) is not unique: property1')
-    })
-
-    it('should pass when a class propertyRef is an external url', () => {
-      const graph = [
-        {
-          type: 'Class',
-          label: 'class1',
-          propertyRefs: [{
-            ref: 'https://www.schesign.com/u/user/design/1.0.0/property/pname',
-            cardinality: { minItems: 0, maxItems: 1 }
-          }]
-        }
-      ]
-      const err = validateGraph(graph)
-      expect(err).to.equal(null)
-    })
-
-    it('should fail when a class propertyRef does not resolve', () => {
-      const graph = [
-        {
-          type: 'Class',
-          label: 'class1',
-          propertyRefs: [{ ref: 'property2', cardinality: { minItems: 0, maxItems: 1 } }]
-        },
-        {
-          type: 'Property',
-          label: 'property1',
-          range: { type: 'Text' }
-        }
-      ]
-      const err = validateGraph(graph)
-      expect(err).to.equal('Class node class1 ref property2 does not exist')
-    })
-
-    it('should pass even when ref case does not match', () => {
-      const graph = [
-        {
-          type: 'Class',
-          label: 'class1',
-          propertyRefs: [{ ref: 'PROPERTY1', cardinality: { minItems: 0, maxItems: 1 } }]
-        },
-        {
-          type: 'Property',
-          label: 'property1',
-          range: { type: 'Text' }
-        }
-      ]
-      const err = validateGraph(graph)
-      expect(err).to.equal(null)
-    })
-
-    it('should fail when a NestedObject propertyRef does not resolve', () => {
-      const graph = [
-        {
-          type: 'Class',
-          label: 'class1',
-          propertyRefs: [{ ref: 'property1', cardinality: { minItems: 0, maxItems: 1 } }]
-        },
-        {
-          type: 'Property',
-          label: 'property1',
-          range: {
-            type: 'NestedObject',
-            propertyRefs: [{ ref: 'property2', cardinality: { minItems: 0, maxItems: 1 } }]
-          }
-        },
-        {
-          type: 'Property',
-          label: 'property3',
-          range: { type: 'Text' }
-        }
-      ]
-      const err = validateGraph(graph)
-      expect(err).to.equal('Property node property1 ref property2 does not exist')
-    })
-
-    it('should succeed when a NestedObject propertyRef does resolve', () => {
-      const graph = [
-        {
-          type: 'Class',
-          label: 'class1',
-          propertyRefs: [{ ref: 'property1', cardinality: { minItems: 0, maxItems: 1 } }]
-        },
-        {
-          type: 'Property',
-          label: 'property1',
-          range: {
-            type: 'NestedObject',
-            propertyRefs: [{ ref: 'property2', cardinality: { minItems: 0, maxItems: 1 } }]
-          }
-        },
-        {
-          type: 'Property',
-          label: 'property2',
-          range: { type: 'Text' }
-        }
-      ]
-      const err = validateGraph(graph)
-      expect(err).to.equal(null)
-    })
-
-    it('should succeed when a NestedObject propertyRef does resolve with a recursive strucrure', () => {
-      const graph = [
-        {
-          type: 'Class',
-          label: 'class1',
-          propertyRefs: [{ ref: 'property1', cardinality: { minItems: 0, maxItems: 1 } }]
-        },
-        {
-          type: 'Property',
-          label: 'property1',
-          range: {
-            type: 'NestedObject',
-            propertyRefs: [{ ref: 'property2', cardinality: { minItems: 0, maxItems: 1 } }]
-          }
-        },
-        {
-          type: 'Property',
-          label: 'property2',
-          range: {
-            type: 'NestedObject',
-            propertyRefs: [{ ref: 'property1', cardinality: { minItems: 0, maxItems: 1 } }]
-          }
-        }
-      ]
-      const err = validateGraph(graph)
-      expect(err).to.equal(null)
-    })
-
-    it('should pass when a property linked class resolves', () => {
-      const graph = [
-        {
-          type: 'Class',
-          label: 'class1',
-          propertyRefs: [{ ref: 'property1', cardinality: { minItems: 0, maxItems: 1 } }]
-        },
-        {
-          type: 'Class',
-          label: 'class2',
-          propertyRefs: [{ ref: 'property1', cardinality: { minItems: 0, maxItems: 1 } }]
-        },
-        {
-          type: 'Property',
-          label: 'property1',
-          range: {
-            type: 'LinkedClass',
-            ref: 'class2'
-          }
-        }
-      ]
-      const err = validateGraph(graph)
-      expect(err).to.equal(null)
-    })
-
-    it('should pass when a property linked class is a uid', () => {
-      const graph = [
-        {
-          type: 'Class',
-          label: 'class1',
-          propertyRefs: [{ ref: 'property1', cardinality: { minItems: 0, maxItems: 1 } }]
-        },
-        {
-          type: 'Property',
-          label: 'property1',
-          range: {
-            type: 'LinkedClass',
-            ref: 'https://www.schesign.com/u/user/design/1.0.0/property/pname'
-          }
-        }
-      ]
-      const err = validateGraph(graph)
-      expect(err).to.equal(null)
-    })
-
-    it('should fail when a property linked class does not resolve', () => {
-      const graph = [
-        {
-          type: 'Class',
-          label: 'class1',
-          propertyRefs: [{ ref: 'property1', cardinality: { minItems: 0, maxItems: 1 } }]
-        },
-        {
-          type: 'Class',
-          label: 'class2',
-          propertyRefs: [{ ref: 'property1', cardinality: { minItems: 0, maxItems: 1 } }]
-        },
-        {
-          type: 'Property',
-          label: 'property1',
-          range: {
-            type: 'LinkedClass',
-            ref: 'class3'
-          }
-        }
-      ]
-      const err = validateGraph(graph)
-      expect(err).to.equal('In property property1 could not resolve ref class3')
-    })
-
-    it('should pass when a class subClassOf resolves', () => {
-      const graph = [
-        {
-          type: 'Class',
-          label: 'class1',
-          propertyRefs: [{ ref: 'property1', cardinality: { minItems: 0, maxItems: 1 } }]
-        },
-        {
-          type: 'Class',
-          label: 'class2',
-          subClassOf: 'class1',
-          propertyRefs: [{ ref: 'property1', cardinality: { minItems: 0, maxItems: 1 } }]
-        },
-        {
-          type: 'Property',
-          label: 'property1',
-          range: { type: 'Text' }
-        }
-      ]
-      const err = validateGraph(graph)
-      expect(err).to.equal(null)
-    })
-
-    it('should fail when a class subClassOf does not resolve', () => {
-      const graph = [
-        {
-          type: 'Class',
-          label: 'class1',
-          propertyRefs: [{ ref: 'property1', cardinality: { minItems: 0, maxItems: 1 } }]
-        },
-        {
-          type: 'Class',
-          label: 'class2',
-          subClassOf: 'class3',
-          propertyRefs: [{ ref: 'property1', cardinality: { minItems: 0, maxItems: 1 } }]
-        },
-        {
-          type: 'Property',
-          label: 'property1',
-          range: { type: 'Text' }
-        }
-      ]
-      const err = validateGraph(graph)
-      expect(err).to.equal('In Class class2 could not resolve subClassOf class3')
-    })
+    fail.forEach(elems => _validate(validateGraph, elems[0], elems[1]))
+    success.forEach(elem => _validate(validateGraph, elem, null))
   })
 })
-// _validate()
-
-// describe('graph validation functions', () => {
-//   describe('validatePropertyRef()', () => {
-//     const fail = [
-//       [null, 'must be an object'],
-//       [{}, 'ref is required'],
-//       [{ref: 1}, 'ref is required'],
-//       [{ref: 1}, 'ref is required'],
-//       [{ref: 'one', minItems: '1'}, 'minItems must be a number']
-//     ]
-//     const succeed = [
-//       {ref: 'label'},
-//       {ref: 'label', minItems: 1, maxItems: 1},
-//       {ref: 'label', minItems: 1, maxItems: null},
-//       {ref: 'u/user_a'},
-//       {ref: 'u/user_a/design_a/property/a'},
-//       {ref: 'u/user_a/design_a/class/a'}
-//     ]
-//     it('should pass all cases', () => {
-//       fail.forEach(el => {
-//         const err = validatePropertySpec(el[0])
-//         expect(err).to.equal(el[1])
-//       })
-//     })
-//   })
-//   succeed.forEach(el => {
-//     const err = validatePropertySpec(el)
-//     it('hello', () => {
-
-//     })
-//     expect(err).to.equal(null)
-//   })
-  // })

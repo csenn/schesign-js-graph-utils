@@ -42,18 +42,19 @@ export function validateReducedUid (reduced) {
 
 /* This will work for now */
 export function validateUid (uid, expectedType) {
+  let type
   try {
-    const type = getUidType(uid)
-    if (expectedType && expectedType !== type) {
-      return `Uid is not of type: ${expectedType}`
-    }
-    if (isString(type)) {
-      return null
-    }
-    return `Could not validate uid: ${uid}`
+    type = getUidType(uid)
   } catch (err) {
     return err
   }
+  if (expectedType && expectedType !== type) {
+    return `uid is not of type "${expectedType}"`
+  }
+  if (isString(type)) {
+    return null
+  }
+  return `Could not validate uid: ${uid}`
 }
 
 export function validateUserUid (uid) {

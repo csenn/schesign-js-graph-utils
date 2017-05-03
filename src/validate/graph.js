@@ -5,20 +5,11 @@ import isBoolean from 'lodash/isBoolean'
 import * as constants from '../constants'
 import { validateNodeLabel } from './labels'
 import { validatePropertyUid, validateClassUid, validateUid } from './uids'
+import { reduceUid } from '../utils'
 
 /* Cardinality helpers */
 export function validateCardinality (cardinality) {
   throw new Error('Deprecated: validateCardinality')
-
-  // const err = 'Bad Cardinality. Must be in format {minItems: [num], maxItems: [num || null]}'
-  // if (!cardinality) {
-  //   return err
-  // } else if (!isNumber(cardinality.minItems)) {
-  //   return err
-  // } else if (cardinality.maxItems !== null && !isNumber(cardinality.maxItems)) {
-  //   return err
-  // }
-  // return null
 }
 
 function _ensureAllowedKeys (keys, allowed) {
@@ -52,6 +43,7 @@ export function validatePropertySpec (propertySpec) {
   if ('primaryKey' in propertySpec && !isBoolean(propertySpec.primaryKey)) {
     return 'primaryKey must be boolean'
   }
+
   return null
 }
 
@@ -113,24 +105,19 @@ export function validateRange (range) {
   if ('regex' in range && !isString(range.regex)) {
     return `regex must be a string`
   }
-
   if (range.type === 'Enum') {
     if (!('values' in range) || !isArray(range.values)) {
       return `values is required for Enum`
     }
   }
-
   if (range.type === 'LinkedClass') {
     if (!('ref' in range) || !isString(range.ref)) {
       return `ref should be a string for LinkedClass`
     }
   }
-
   if (range.type === 'NestedObject' && 'propertySpecs' in range) {
     err = validatePropertySpecs(range.propertySpecs)
-    if (err) {
-      return err
-    }
+    if (err) return err
   }
 
   return null
@@ -153,9 +140,7 @@ export function validatePropertyNode (propertyNode, opts = {}) {
   }
 
   let err = _ensureAllowedKeys(Object.keys(propertyNode), constants.VALID_PROPERTY_KEYS)
-  if (err) {
-    return err
-  }
+  if (err) return err
 
   err = _validateNode(propertyNode)
   if (err) return err
@@ -196,121 +181,128 @@ export function validateClassNode (classNode, opts = {}) {
   return null
 }
 
-// export function validatePropertyNode (propertyNode, opts = {}) {
-//   const nodeErr = _validateNode(constants.CLASS, propertyNode, [
-//     'uid',
-//     'type',
-//     'label',
-//     'description',
-//     'range'
-//   ])
-//   if (nodeErr) {
-//     return nodeErr
-//   }
-//   const rangeError = validateRange(propertyNode.range, opts)
-//   if (rangeError) {
-//     return rangeError
-//   }
-//   return null
-// }
+function _checkReference (type, cache, ref) {
+  const lowerRef = ref.toLowerCase()
+  const isUid = lowerRef.indexOf('u/') > -1 || lowerRef.indexOf('o/') > -1
+  if (isUid) {
+    const func = type === 'Class'
+      ? validateClassUid
+      : validatePropertyUid
+
+    const err = func(lowerRef)
+    if (err) return `${lowerRef} ${err}`
+
+    const reduced = reduceUid(lowerRef)
+    if (reduced.versionLabel === 'master') {
+      return `${lowerRef} should not reference a master version`
+    }
+  } else if (!cache[lowerRef]) {
+    return `"${ref}" has not been declared as a ${type}`
+  }
+  return null
+}
+
+const _checkClassReference = (context, ref) => _checkReference('Class', context.classes, ref)
+const _checkPropertyReference = (context, ref) => _checkReference('Property', context.properties, ref)
+
+function _checkPropertySpecs (context, propertySpecs) {
+  if (!isArray(propertySpecs)) return
+  let index = -1
+  for (const propretySpec of propertySpecs) {
+    index++
+    const err = _checkPropertyReference(context, propretySpec.ref)
+    if (err) return `propertySpecs[${index}].ref ${err}`
+  }
+  return null
+}
+
+function _checkRefsInProperties (context) {
+  for (const key of Object.keys(context.properties)) {
+    const propertyNode = context.properties[key]
+    const location = `Property.${propertyNode.label}.`
+
+    if (propertyNode.range.type === 'LinkedClass') {
+      const err = _checkClassReference(context, propertyNode.range.ref)
+      if (err) return `${location}range.ref ${err}`
+    }
+
+    if (propertyNode.range.type === 'NestedObject') {
+      const err = _checkPropertySpecs(context, propertyNode.range.propertySpecs)
+      if (err) return `${location}${err}`
+    }
+  }
+  return null
+}
+
+/* Ensure propertySpecs and subClassOf resolve */
+function _checkRefsInClasses (context) {
+  for (const key of Object.keys(context.classes)) {
+    const classNode = context.classes[key]
+    const location = `Class.${classNode.label}.`
+
+    let err = _checkPropertySpecs(context, classNode.propertySpecs)
+    if (err) return `${location}${err}`
+
+    if (classNode.subClassOf) {
+      err = _checkClassReference(context, classNode.subClassOf)
+      if (err) {
+        return `${location}subClassOf ${err}`
+      }
+    }
+  }
+}
+
+function _fillContext (context, graph) {
+  let index = -1
+  for (const node of graph) {
+    index++
+    const nodeLabel = node.label && node.label.toLowerCase()
+
+    let cache, validateFunc
+
+    if (node.type === constants.CLASS) {
+      cache = context.classes
+      validateFunc = validateClassNode
+    } else if (node.type === constants.PROPERTY) {
+      cache = context.properties
+      validateFunc = validatePropertyNode
+    } else {
+      return `graph[${index}].type must be "${constants.CLASS}" or "${constants.PROPERTY}"`
+    }
+
+    const location = node.label
+      ? `${node.type}.${node.label}.`
+      : `graph[${index}].`
+
+    const err = validateFunc(node)
+    if (err) return location + err
+
+    if (cache[nodeLabel]) {
+      return `${location}label "${node.label}" is not unique (case insensitive)`
+    }
+    cache[nodeLabel] = node
+  }
+  return null
+}
 
 export function validateGraph (graph, opts = {}) {
   if (!isArray(graph)) {
     return 'Graph must be an array of class and property nodes'
   }
-  const classes = {}
-  const properties = {}
 
-  for (const node of graph) {
-    if (node.type === constants.CLASS) {
-      const err = validateClassNode(node, opts)
-      if (err) {
-        return err
-      }
-      const label = node.label.toLowerCase()
-      if (classes[label]) {
-        return `Class node (after becoming lowercase) is not unique: ${label}`
-      }
-      classes[label] = node
-    } else if (node.type === constants.PROPERTY) {
-      const err = validatePropertyNode(node, opts)
-      if (err) {
-        return err
-      }
-      const label = node.label.toLowerCase()
-      if (properties[label]) {
-        return `Property node (after becoming lowercase) is not unique: ${label}`
-      }
-      properties[label] = node
-    } else {
-      return 'Node type must be either "Version", "Class", or "Property"'
-    }
+  const context = {
+    classes: {},
+    properties: {}
   }
 
-  /* Use resolved to prevent recursion */
-  const resolved = {}
-  const resolvePropertyRefs = node => {
-    const propertySpecs = node.type === constants.CLASS
-      ? node.propertySpecs
-      : node.range.propertySpecs
+  let err = _fillContext(context, graph)
+  if (err) return err
 
-    for (const propertySpec of propertySpecs) {
-      const ref = propertySpec.ref.toLowerCase()
-      if (resolved[ref]) {
-        continue
-      }
-      resolved[ref] = true
-      const uidError = validateUid(ref)
-      if (!uidError) {
-        continue
-      }
-      const property = properties[ref]
-      if (!property) {
-        return `${node.type} node ${node.label} ref ${propertySpec.ref} does not exist`
-      }
-      if (property.range.type === constants.NESTED_OBJECT) {
-        const nestedObjectErr = resolvePropertyRefs(property)
-        if (nestedObjectErr) {
-          return nestedObjectErr
-        }
-      }
-    }
-    return null
-  }
+  err = _checkRefsInClasses(context)
+  if (err) return err
 
-  /* Resolve propertySpecs and subClassOf for classNodes */
-  for (const key of Object.keys(classes)) {
-    const classNode = classes[key]
-    const err = resolvePropertyRefs(classNode)
-    if (err) {
-      return err
-    }
-    if (classNode.subClassOf) {
-      const subClassOf = classNode.subClassOf.toLowerCase()
-      const uidError = validateUid(subClassOf)
-      if (!uidError) {
-        continue
-      }
-      if (!classes[subClassOf]) {
-        return `In Class ${classNode.label} could not resolve subClassOf ${classNode.subClassOf}`
-      }
-    }
-  }
-
-  /* Resolve classIds for properties with linked class range types */
-  for (const key of Object.keys(properties)) {
-    const propertyNode = properties[key]
-    if (propertyNode.range.type === constants.LINKED_CLASS) {
-      const ref = propertyNode.range.ref.toLowerCase()
-      const uidError = validateUid(ref)
-      if (!uidError) {
-        continue
-      }
-      if (!classes[ref]) {
-        return `In property ${propertyNode.label} could not resolve ref ${propertyNode.range.ref}`
-      }
-    }
-  }
+  err = _checkRefsInProperties(context)
+  if (err) return err
 
   return null
 }
