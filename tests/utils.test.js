@@ -11,7 +11,7 @@ import propertyVariations from 'schesign-graph-examples/graphs/import/propertyVa
 
 const { describe, it } = global
 
-describe('graph util functions', () => {
+describe.skip('graph util functions', () => {
   describe('createUid()', () => {
     it('should throw an error for a bad ownerType', () => {
       try {

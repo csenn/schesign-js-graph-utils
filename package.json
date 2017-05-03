@@ -13,7 +13,7 @@
     "build": "babel src -d dist",
     "lint": "standard",
     "lint:fix": "standard --fix",
-    "test": "mocha tests --compilers js:babel-register",
+    "test": "mocha tests --compilers js:babel-register tests/**/*.test.js",
     "prepublish": "npm run clean & npm run build"
   },
   "devDependencies": {
