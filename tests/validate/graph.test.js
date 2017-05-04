@@ -18,7 +18,7 @@ function _validate (func, elem, result) {
   })
 }
 
-const SPEC_TYPES = 'ref, minItems, maxItems, index, primaryKey'
+const SPEC_TYPES = 'ref, minItems, maxItems, index, primaryKey, unique'
 
 describe('validate/graph', () => {
   describe('validatePropertySpec()', () => {
@@ -30,7 +30,8 @@ describe('validate/graph', () => {
       [{ref: 'one', minItems: '1'}, 'minItems must be a number'],
       [{ref: 'one', maxItems: '1'}, 'maxItems must be a number or null'],
       [{ref: 'one', maxItems: 'null'}, 'maxItems must be a number or null'],
-      [{ref: 'one', primaryKey: null}, 'primaryKey must be boolean']
+      [{ref: 'one', primaryKey: null}, 'primaryKey must be boolean'],
+      [{ref: 'one', unique: null}, 'unique must be boolean']
     ]
 
     const success = [
@@ -41,7 +42,9 @@ describe('validate/graph', () => {
       {ref: 'label', minItems: 1, maxItems: 1},
       {ref: 'label', minItems: 1, maxItems: null},
       {ref: 'label', primaryKey: true},
-      {ref: 'label', primaryKey: false}
+      {ref: 'label', primaryKey: false},
+      {ref: 'label', unique: true},
+      {ref: 'label', unique: false}
     ]
 
     fail.forEach(elems => _validate(validatePropertySpec, elems[0], elems[1]))
@@ -51,11 +54,13 @@ describe('validate/graph', () => {
     const fail = [
       [ [{ref1: 'a'}], 'propertySpecs[0].ref is required' ],
       [ [{ref: 'a', minItems: 'hello'}], 'propertySpecs.a.minItems must be a number' ],
-      [ [{ref: 'a'}, {ref: 'a'}], 'propertySpecs.a was repeated' ]
+      [ [{ref: 'a'}, {ref: 'a'}], 'propertySpecs.a was repeated' ],
+      [ [{ref: 'a', primaryKey: true}, {ref: 'b', primaryKey: true}], `propertySpecs.b.primaryKey can't be declarred. There can be only one primary key.`]
     ]
     const success = [
       [],
-      [{ref: 'a'}, {ref: 'b'}]
+      [{ref: 'a'}, {ref: 'b'}],
+      [{ref: 'a', primaryKey: true}, {ref: 'b'}]
     ]
 
     fail.forEach(elems => _validate(validatePropertySpecs, elems[0], elems[1]))
@@ -116,7 +121,8 @@ describe('validate/graph', () => {
       [{type: 'Class', label: 'a', subClassOf: 3}, 'subClassOf must be a string'],
       [{type: 'Class', label: 'a', propertySpecs: 'sdsd'}, 'propertySpecs[0].ref is required'],
       [{type: 'Class', label: 'a', propertySpecs: [{ref: 'a', hello: 'ss'}]}, `propertySpecs.a.hello is invalid. Must be one of: ${SPEC_TYPES}`],
-      [{type: 'Class', label: 'a', excludeParentProperties: 2}, `excludeParentProperties should be an array`]
+      [{type: 'Class', label: 'a', excludeParentProperties: 2}, `excludeParentProperties should be an array`],
+      [{type: 'Class', label: 'a', excludeParentProperties: [2]}, `excludeParentProperties should be an array of strings`]
     ]
 
     const success = [
@@ -174,11 +180,11 @@ describe('validate/graph', () => {
       ],
       [
         [{type: 'Class', label: 'a'}, {type: 'Class', label: 'A'}],
-        'Class.A.label "A" is not unique (case insensitive)'
+        'Class.A.label "A" is declared more then once (label is case insensitive)'
       ],
       [
         [{type: 'Property', label: 'a', range: {type: 'Text'}}, {type: 'Property', label: 'A', range: {type: 'Text'}}],
-        'Property.A.label "A" is not unique (case insensitive)'
+        'Property.A.label "A" is declared more then once (label is case insensitive)'
       ],
       [
         [{type: 'Class', label: 'a', subClassOf: 'b'}],
@@ -207,6 +213,10 @@ describe('validate/graph', () => {
       [
         [{type: 'Class', label: 'a', propertySpecs: [{ref: 'u/user_a/design_a/master/class/class1'}]}],
         'Class.a.propertySpecs[0].ref u/user_a/design_a/master/class/class1 uid is not of type "PropertyUid"'
+      ],
+      [
+        [{type: 'Class', label: 'a', excludeParentProperties: ['at']}],
+        '"at" has not been declared as a Property'
       ]
     ]
 

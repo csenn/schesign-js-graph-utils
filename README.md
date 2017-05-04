@@ -24,5 +24,5 @@ npm install schesign-js-graph-utils --save
 ```
 
 Notes
-* make sure class cant be added more then once
 * should add a test for recursive nested objects
+* rangeTypes.Text should take more params for types

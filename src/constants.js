@@ -3,6 +3,7 @@
 export const CLASS = 'Class'
 export const PROPERTY = 'Property'
 
+/* Resource Keys */
 export const NODE_TYPE = 'type'
 export const NODE_LABEL = 'label'
 export const NODE_DESCRIPTION = 'description'
@@ -11,7 +12,24 @@ export const NODE_PROPERTY_SPECS = 'propertySpecs'
 export const NODE_RANGE = 'range'
 export const NODE_EXCLUDE_PARENT_PROPERTIES = 'excludeParentProperties'
 
-/* Types other then primitives */
+export const VALID_CLASS_KEYS = [
+  NODE_TYPE,
+  NODE_LABEL,
+  NODE_DESCRIPTION,
+  NODE_SUBCLASSOF,
+  NODE_PROPERTY_SPECS,
+  NODE_EXCLUDE_PARENT_PROPERTIES
+]
+
+export const VALID_PROPERTY_KEYS = [
+  NODE_TYPE,
+  NODE_LABEL,
+  NODE_DESCRIPTION,
+  NODE_PROPERTY_SPECS,
+  NODE_RANGE
+]
+
+/* Non Primitives */
 export const LINKED_CLASS = 'LinkedClass'
 export const NESTED_OBJECT = 'NestedObject'
 
@@ -40,18 +58,7 @@ export const NUMBER_INT_64 = 'Int64'
 export const NUMBER_FLOAT_32 = 'Float32'
 export const NUMBER_FLOAT_64 = 'Float64'
 
-  // ref: true,
-  // minItems: true,
-  // maxItems: true,
-  // primary: true,
-  // index: true
-
-export const SPEC_REF = 'ref'
-export const SPEC_MIN_ITEMS = 'minItems'
-export const SPEC_MAX_ITEMS = 'maxItems'
-export const SPEC_INDEX = 'index'
-export const SPEC_PRIMARY_KEY = 'primaryKey'
-
+/* Range Types */
 export const RANGE_TYPE = 'type'
 export const RANGE_FORMAT = 'format'
 export const RANGE_MIN_LENGTH = 'minLength'
@@ -72,22 +79,6 @@ export const PROPERTY_UID = 'PropertyUid'
 export const CLASS_UID = 'ClassUid'
 
 /* Group constants in convenient ways */
-export const VALID_CLASS_KEYS = [
-  NODE_TYPE,
-  NODE_LABEL,
-  NODE_DESCRIPTION,
-  NODE_SUBCLASSOF,
-  NODE_PROPERTY_SPECS,
-  NODE_EXCLUDE_PARENT_PROPERTIES
-]
-
-export const VALID_PROPERTY_KEYS = [
-  NODE_TYPE,
-  NODE_LABEL,
-  NODE_DESCRIPTION,
-  NODE_PROPERTY_SPECS,
-  NODE_RANGE
-]
 
 export const RANGE_TYPES = [
   BOOLEAN,
@@ -157,10 +148,18 @@ export const RANGE_FORMAT_MAPPING = {
   ]
 }
 
+export const SPEC_REF = 'ref'
+export const SPEC_MIN_ITEMS = 'minItems'
+export const SPEC_MAX_ITEMS = 'maxItems'
+export const SPEC_INDEX = 'index'
+export const SPEC_PRIMARY_KEY = 'primaryKey'
+export const SPEC_UNIQUE = 'unique'
+
 export const PROPERTY_SPEC_KEYS = [
   SPEC_REF,
   SPEC_MIN_ITEMS,
   SPEC_MAX_ITEMS,
   SPEC_INDEX,
-  SPEC_PRIMARY_KEY
+  SPEC_PRIMARY_KEY,
+  SPEC_UNIQUE
 ]

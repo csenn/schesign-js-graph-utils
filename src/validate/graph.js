@@ -30,9 +30,7 @@ export function validatePropertySpec (propertySpec) {
   }
 
   const err = _ensureAllowedKeys(Object.keys(propertySpec), constants.PROPERTY_SPEC_KEYS)
-  if (err) {
-    return `${err}`
-  }
+  if (err) return err
 
   if ('minItems' in propertySpec && !isNumber(propertySpec.minItems)) {
     return 'minItems must be a number'
@@ -43,24 +41,38 @@ export function validatePropertySpec (propertySpec) {
   if ('primaryKey' in propertySpec && !isBoolean(propertySpec.primaryKey)) {
     return 'primaryKey must be boolean'
   }
-
+  if ('unique' in propertySpec && !isBoolean(propertySpec.unique)) {
+    return 'unique must be boolean'
+  }
   return null
 }
 
 export function validatePropertySpecs (propertySpecs) {
   const found = {}
+  let primaryKeyDeclared = false
+
   let index = -1
   for (const propertySpec of propertySpecs) {
     index++
-    let location = 'propertySpecs'
-    location += propertySpec.ref ? `.${propertySpec.ref}` : `[${index}]`
-    if (found[propertySpec.ref]) {
-      return `${location} was repeated`
+
+    const ref = propertySpec.ref
+    const path = 'propertySpecs' + (ref ? `.${ref}` : `[${index}]`)
+
+    if (found[ref]) {
+      return `${path} was repeated`
     }
-    found[propertySpec.ref] = true
+    found[ref] = true
+
     const err = validatePropertySpec(propertySpec)
     if (err) {
-      return `${location}.${err}`
+      return `${path}.${err}`
+    }
+
+    if ('primaryKey' in propertySpec && propertySpec.primaryKey) {
+      if (primaryKeyDeclared) {
+        return `${path}.primaryKey can't be declarred. There can be only one primary key.`
+      }
+      primaryKeyDeclared = true
     }
   }
   return null
@@ -86,9 +98,7 @@ export function validateRange (range) {
 
   /* Check keys are valid for range.type */
   let err = _ensureAllowedKeys(rangeKeys, constants.RANGE_CONSTRAINT_MAPPING[range.type])
-  if (err) {
-    return err
-  }
+  if (err) return err
 
   if ('format' in range) {
     if (!constants.RANGE_FORMAT_MAPPING[range.type].includes(range.format)) {
@@ -175,8 +185,15 @@ export function validateClassNode (classNode, opts = {}) {
     err = validatePropertySpecs(classNode.propertySpecs)
     if (err) return err
   }
-  if ('excludeParentProperties' in classNode && !isArray(classNode.excludeParentProperties)) {
-    return 'excludeParentProperties should be an array'
+  if ('excludeParentProperties' in classNode) {
+    if (!isArray(classNode.excludeParentProperties)) {
+      return 'excludeParentProperties should be an array'
+    }
+    for (const parentProp of classNode.excludeParentProperties) {
+      if (!isString(parentProp)) {
+        return 'excludeParentProperties should be an array of strings'
+      }
+    }
   }
   return null
 }
@@ -249,6 +266,13 @@ function _checkRefsInClasses (context) {
         return `${location}subClassOf ${err}`
       }
     }
+
+    if (classNode.excludeParentProperties) {
+      for (const parentProp of classNode.excludeParentProperties) {
+        err = _checkPropertyReference(context, parentProp)
+        if (err) return err
+      }
+    }
   }
 }
 
@@ -278,7 +302,7 @@ function _fillContext (context, graph) {
     if (err) return location + err
 
     if (cache[nodeLabel]) {
-      return `${location}label "${node.label}" is not unique (case insensitive)`
+      return `${location}label "${node.label}" is declared more then once (label is case insensitive)`
     }
     cache[nodeLabel] = node
   }
