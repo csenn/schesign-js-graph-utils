@@ -85,9 +85,9 @@ describe('validate', () => {
     describe('validatePropertySpecs()', () => {
       const fail = [
       [ [{ref1: 'a'}], 'propertySpecs[0].ref is required' ],
-      [ [{ref: 'a', minItems: 'hello'}], 'propertySpecs.a.minItems must be a number' ],
-      [ [{ref: 'a'}, {ref: 'a'}], 'propertySpecs.a was repeated' ],
-      [ [{ref: 'a', primaryKey: true}, {ref: 'b', primaryKey: true}], `propertySpecs.b.primaryKey can't be declarred. There can be only one primary key.`]
+      [ [{ref: 'a', minItems: 'hello'}], 'propertySpecs[0].minItems must be a number' ],
+      [ [{ref: 'a'}, {ref: 'a'}], 'propertySpecs[1] "a" was repeated' ],
+      [ [{ref: 'a', primaryKey: true}, {ref: 'b', primaryKey: true}], `propertySpecs[1].primaryKey can't be declared. There can be only one primary key.`]
       ]
       const success = [
       [],
@@ -114,7 +114,7 @@ describe('validate', () => {
       [{type: 'LinkedClass', ref: 2}, 'ref should be a string for LinkedClass'],
       [{type: 'NestedObject', properties: []}, 'properties is invalid. Must be one of: type, propertySpecs'],
       [{type: 'NestedObject', propertySpecs: [{}]}, 'propertySpecs[0].ref is required'],
-      [{type: 'NestedObject', propertySpecs: [{ref: 'a', hello: 'ss'}]}, `propertySpecs.a.hello is invalid. Must be one of: ${SPEC_TYPES}`]
+      [{type: 'NestedObject', propertySpecs: [{ref: 'a', hello: 'ss'}]}, `propertySpecs[0].hello is invalid. Must be one of: ${SPEC_TYPES}`]
       ]
 
       const success = [
@@ -151,7 +151,7 @@ describe('validate', () => {
       [{type: 'Class', label: 'a', description: 3}, 'description must be a string'],
       [{type: 'Class', label: 'a', subClassOf: 3}, 'subClassOf must be a string'],
       [{type: 'Class', label: 'a', propertySpecs: 'sdsd'}, 'propertySpecs is required and must be an array'],
-      [{type: 'Class', label: 'a', propertySpecs: [{ref: 'a', hello: 'ss'}]}, `propertySpecs.a.hello is invalid. Must be one of: ${SPEC_TYPES}`],
+      [{type: 'Class', label: 'a', propertySpecs: [{ref: 'a', hello: 'ss'}]}, `propertySpecs[0].hello is invalid. Must be one of: ${SPEC_TYPES}`],
       [{type: 'Class', label: 'a', propertySpecs: [], excludeParentProperties: 2}, `excludeParentProperties should be an array`],
       [{type: 'Class', label: 'a', propertySpecs: [], excludeParentProperties: [2]}, `excludeParentProperties should be an array of strings`]
       ]

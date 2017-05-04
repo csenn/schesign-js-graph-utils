@@ -194,10 +194,10 @@ export function validatePropertySpecs (propertySpecs) {
     index++
 
     const ref = propertySpec.ref
-    const path = 'propertySpecs' + (ref ? `.${ref}` : `[${index}]`)
+    const path = `propertySpecs[${index}]`
 
     if (found[ref]) {
-      return `${path} was repeated`
+      return `${path} "${ref}" was repeated`
     }
     found[ref] = true
 
@@ -208,7 +208,7 @@ export function validatePropertySpecs (propertySpecs) {
 
     if ('primaryKey' in propertySpec && propertySpec.primaryKey) {
       if (primaryKeyDeclared) {
-        return `${path}.primaryKey can't be declarred. There can be only one primary key.`
+        return `${path}.primaryKey can't be declared. There can be only one primary key.`
       }
       primaryKeyDeclared = true
     }
