@@ -1,6 +1,6 @@
 {
   "name": "schesign-js-graph-utils",
-  "version": "0.1.19",
+  "version": "0.1.21",
   "license": "MIT",
   "description": "Helpers to build and use a schesign graph",
   "repository": {

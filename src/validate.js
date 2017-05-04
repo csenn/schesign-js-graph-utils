@@ -277,8 +277,8 @@ function _validateNode (node) {
   if (err) {
     return err
   }
-  if ('description' in node && !isString(node.description)) {
-    return 'description must be a string'
+  if ('description' in node && node.description !== null && !isString(node.description)) {
+    return 'description must be null or a string'
   }
   return null
 }
@@ -317,8 +317,8 @@ export function validateClassNode (classNode, opts = {}) {
   err = _validateNode(classNode)
   if (err) return err
 
-  if ('subClassOf' in classNode && !isString(classNode.subClassOf)) {
-    return 'subClassOf must be a string'
+  if ('subClassOf' in classNode && classNode.subClassOf !== null && !isString(classNode.subClassOf)) {
+    return 'subClassOf must be null or a string'
   }
 
   err = validatePropertySpecs(classNode.propertySpecs)
@@ -346,11 +346,8 @@ function _checkReference (type, cache, ref) {
       : validatePropertyUid
 
     const err = func(lowerRef)
-    if (err) return `${lowerRef} ${err}`
-
-    const reduced = reduceUid(lowerRef)
-    if (reduced.versionLabel === 'master') {
-      return `${lowerRef} should not reference a master version`
+    if (err) {
+      return `${lowerRef} ${err}`
     }
   } else if (!cache[lowerRef]) {
     return `"${ref}" has not been declared as a ${type}`

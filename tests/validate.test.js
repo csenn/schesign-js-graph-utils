@@ -148,8 +148,8 @@ describe('validate', () => {
       [{type: 'Class', range: 'a'}, 'range is invalid. Must be one of: type, label, description, subClassOf, propertySpecs, excludeParentProperties'],
       [{type: 'Class'}, 'label must be a string'],
       [{type: 'Class', label: 'a a'}, 'label "a a" can only have letters, numbers, or underscores'],
-      [{type: 'Class', label: 'a', description: 3}, 'description must be a string'],
-      [{type: 'Class', label: 'a', subClassOf: 3}, 'subClassOf must be a string'],
+      [{type: 'Class', label: 'a', description: 3}, 'description must be null or a string'],
+      [{type: 'Class', label: 'a', subClassOf: 3}, 'subClassOf must be null or a string'],
       [{type: 'Class', label: 'a', propertySpecs: 'sdsd'}, 'propertySpecs is required and must be an array'],
       [{type: 'Class', label: 'a', propertySpecs: [{ref: 'a', hello: 'ss'}]}, `propertySpecs[0].hello is invalid. Must be one of: ${SPEC_TYPES}`],
       [{type: 'Class', label: 'a', propertySpecs: [], excludeParentProperties: 2}, `excludeParentProperties should be an array`],
@@ -159,7 +159,9 @@ describe('validate', () => {
       const success = [
       {type: 'Class', label: 'a', propertySpecs: []},
       {type: 'Class', label: 'a', propertySpecs: [], description: 'cool'},
-      {type: 'Class', label: 'a', propertySpecs: []},
+      {type: 'Class', label: 'a', propertySpecs: [], description: null},
+      {type: 'Class', label: 'a', propertySpecs: [], subClassOf: 'a'},
+      {type: 'Class', label: 'a', propertySpecs: [], subClassOf: null},
       {type: 'Class', label: 'a', propertySpecs: [{ref: 'b'}]},
       {type: 'Class', label: 'a', propertySpecs: [], excludeParentProperties: ['s']}
       ]
@@ -176,12 +178,14 @@ describe('validate', () => {
       [{type: 'Property'}, 'label must be a string'],
       [{type: 'Property', label: 'a a'}, 'label "a a" can only have letters, numbers, or underscores'],
       [{type: 'Property', label: 'hello'}, 'range is required'],
-      [{type: 'Property', label: 'a', description: 3}, 'description must be a string'],
+      [{type: 'Property', label: 'a', description: 3}, 'description must be null or a string'],
       [{type: 'Property', label: 'a', range: 4}, 'type is required']
       ]
 
       const success = [
       {type: 'Property', label: 'a', range: {type: 'Text'}},
+      {type: 'Property', label: 'a', description: 'hello', range: {type: 'Text'}},
+      {type: 'Property', label: 'a', description: null, range: {type: 'Text'}},
       {type: 'Property', label: 'a', range: {type: 'Text'}, description: 'cool'}
       ]
 
@@ -236,10 +240,6 @@ describe('validate', () => {
         [
         [{type: 'Class', label: 'a', propertySpecs: [{ref: 'u/user_a/design_a'}]}],
           'Class.a.propertySpecs[0].ref u/user_a/design_a uid is not of type "PropertyUid"'
-        ],
-        [
-        [{type: 'Class', label: 'a', propertySpecs: [{ref: 'u/user_a/design_a/master/property/a'}]}],
-          'Class.a.propertySpecs[0].ref u/user_a/design_a/master/property/a should not reference a master version'
         ],
         [
         [{type: 'Class', label: 'a', propertySpecs: [{ref: 'u/user_a/design_a/master/class/class1'}]}],
