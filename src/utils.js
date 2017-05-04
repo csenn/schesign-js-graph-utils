@@ -203,54 +203,56 @@ export function printDesign (design, opts = {}) {
 }
 
 export function shortenUid (graph) {
-  const shorten = uid => {
-    if (isString(uid) && uid.indexOf('schesign.com') > -1) {
-      return removeDomainFromUid(uid)
-    }
-    return uid
-  }
+  throw new Error('utils.shortenUid is deprecated')
 
-  const fixPropertyRefs = (propertyRefs = []) => {
-    return propertyRefs.map(propertyRef => {
-      return Object.assign({}, propertyRef, {
-        ref: shorten(propertyRef.ref)
-      })
-    })
-  }
+  // const shorten = uid => {
+  //   if (isString(uid) && uid.indexOf('schesign.com') > -1) {
+  //     return removeDomainFromUid(uid)
+  //   }
+  //   return uid
+  // }
 
-  const fixRange = range => {
-    if (range.type === 'LinkedClass') {
-      return Object.assign({}, range, {
-        ref: shorten(range.ref)
-      })
-    } else if (range.type === 'NestedObject') {
-      return Object.assign({}, range, {
-        propertyRefs: fixPropertyRefs(range.propertyRefs)
-      })
-    }
-    return Object.assign({}, range)
-  }
+  // const fixPropertyRefs = (propertyRefs = []) => {
+  //   return propertyRefs.map(propertyRef => {
+  //     return Object.assign({}, propertyRef, {
+  //       ref: shorten(propertyRef.ref)
+  //     })
+  //   })
+  // }
 
-  return graph.map(node => {
-    if (node.type === 'Class') {
-      return Object.assign({}, node, {
-        uid: shorten(node.uid),
-        subClassOf: shorten(node.subClassOf),
-        excludeParentProperties: node.excludeParentProperties && node.excludeParentProperties.map(shorten),
-        propertyRefs: fixPropertyRefs(node.propertyRefs)
-      })
-    } else if (node.type === 'Property') {
-      return Object.assign({}, node, {
-        uid: shorten(node.uid),
-        range: fixRange(node.range)
-      })
-    } else if (node.type === 'Version') {
-      return Object.assign({}, node, {
-        uid: shorten(node.uid),
-        classes: node.classes && node.classes.map(shorten),
-        properties: node.properties && node.properties.map(shorten)
-      })
-    }
-    return null
-  })
+  // const fixRange = range => {
+  //   if (range.type === 'LinkedClass') {
+  //     return Object.assign({}, range, {
+  //       ref: shorten(range.ref)
+  //     })
+  //   } else if (range.type === 'NestedObject') {
+  //     return Object.assign({}, range, {
+  //       propertyRefs: fixPropertyRefs(range.propertyRefs)
+  //     })
+  //   }
+  //   return Object.assign({}, range)
+  // }
+
+  // return graph.map(node => {
+  //   if (node.type === 'Class') {
+  //     return Object.assign({}, node, {
+  //       uid: shorten(node.uid),
+  //       subClassOf: shorten(node.subClassOf),
+  //       excludeParentProperties: node.excludeParentProperties && node.excludeParentProperties.map(shorten),
+  //       propertyRefs: fixPropertyRefs(node.propertyRefs)
+  //     })
+  //   } else if (node.type === 'Property') {
+  //     return Object.assign({}, node, {
+  //       uid: shorten(node.uid),
+  //       range: fixRange(node.range)
+  //     })
+  //   } else if (node.type === 'Version') {
+  //     return Object.assign({}, node, {
+  //       uid: shorten(node.uid),
+  //       classes: node.classes && node.classes.map(shorten),
+  //       properties: node.properties && node.properties.map(shorten)
+  //     })
+  //   }
+  //   return null
+  // })
 }

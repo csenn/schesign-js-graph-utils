@@ -4,7 +4,7 @@ import isString from 'lodash/isString'
 import isBoolean from 'lodash/isBoolean'
 import * as constants from '../constants'
 import { validateNodeLabel } from './labels'
-import { validatePropertyUid, validateClassUid, validateUid } from './uids'
+import { validatePropertyUid, validateClassUid } from './uids'
 import { reduceUid } from '../utils'
 
 /* Cardinality helpers */
@@ -48,6 +48,9 @@ export function validatePropertySpec (propertySpec) {
 }
 
 export function validatePropertySpecs (propertySpecs) {
+  if (!isArray(propertySpecs)) {
+    return 'propertySpecs is required and must be an array'
+  }
   const found = {}
   let primaryKeyDeclared = false
 
@@ -125,7 +128,8 @@ export function validateRange (range) {
       return `ref should be a string for LinkedClass`
     }
   }
-  if (range.type === 'NestedObject' && 'propertySpecs' in range) {
+
+  if (range.type === 'NestedObject') {
     err = validatePropertySpecs(range.propertySpecs)
     if (err) return err
   }
@@ -181,10 +185,10 @@ export function validateClassNode (classNode, opts = {}) {
   if ('subClassOf' in classNode && !isString(classNode.subClassOf)) {
     return 'subClassOf must be a string'
   }
-  if ('propertySpecs' in classNode) {
-    err = validatePropertySpecs(classNode.propertySpecs)
-    if (err) return err
-  }
+
+  err = validatePropertySpecs(classNode.propertySpecs)
+  if (err) return err
+
   if ('excludeParentProperties' in classNode) {
     if (!isArray(classNode.excludeParentProperties)) {
       return 'excludeParentProperties should be an array'

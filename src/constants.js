@@ -29,18 +29,18 @@ export const VALID_PROPERTY_KEYS = [
   NODE_RANGE
 ]
 
-/* Non Primitives */
+/* range  non-primitives */
 export const LINKED_CLASS = 'LinkedClass'
 export const NESTED_OBJECT = 'NestedObject'
 
-/* Main Primitives */
+/* range primitives */
 export const TEXT = 'Text'
 export const NUMBER = 'Number'
 export const BOOLEAN = 'Boolean'
 export const DATE = 'Date'
 export const ENUM = 'Enum'
 
-/* Primitive Formats */
+/* primitive formats */
 export const TEXT_URL = 'Url'
 export const TEXT_EMAIL = 'Email'
 export const TEXT_HOSTNAME = 'Hostname'
@@ -58,7 +58,7 @@ export const NUMBER_INT_64 = 'Int64'
 export const NUMBER_FLOAT_32 = 'Float32'
 export const NUMBER_FLOAT_64 = 'Float64'
 
-/* Range Types */
+/* range types */
 export const RANGE_TYPE = 'type'
 export const RANGE_FORMAT = 'format'
 export const RANGE_MIN_LENGTH = 'minLength'
@@ -70,7 +70,7 @@ export const RANGE_REGEX = 'regex'
 export const RANGE_REF = 'ref'
 export const RANGE_PROPERTY_SPECS = 'propertySpecs'
 
-/* Uid Types */
+/* uid yypes */
 export const USER_UID = 'UserUid'
 export const ORGANIZATION_UID = 'OrganizationUid'
 export const DESIGN_UID = 'DesignUid'
@@ -78,8 +78,7 @@ export const VERSION_UID = 'VersionUid'
 export const PROPERTY_UID = 'PropertyUid'
 export const CLASS_UID = 'ClassUid'
 
-/* Group constants in convenient ways */
-
+/* major range types */
 export const RANGE_TYPES = [
   BOOLEAN,
   TEXT,
@@ -90,7 +89,7 @@ export const RANGE_TYPES = [
   LINKED_CLASS
 ]
 
-/* Range constraint Mappings */
+/* range type to contraint mappings */
 export const RANGE_CONSTRAINT_MAPPING = {
   [BOOLEAN]: [
     RANGE_TYPE
@@ -125,7 +124,7 @@ export const RANGE_CONSTRAINT_MAPPING = {
   ]
 }
 
-/* Range Formats */
+/* range type to format mappings */
 export const RANGE_FORMAT_MAPPING = {
   [TEXT]: [
     TEXT_URL,
@@ -148,6 +147,7 @@ export const RANGE_FORMAT_MAPPING = {
   ]
 }
 
+/* propertySpec contraints */
 export const SPEC_REF = 'ref'
 export const SPEC_MIN_ITEMS = 'minItems'
 export const SPEC_MAX_ITEMS = 'maxItems'

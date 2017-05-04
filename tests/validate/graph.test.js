@@ -10,6 +10,10 @@ import {
 
 const { describe, it } = global
 
+/*
+  TODO: should not print strigify here, kind of ugly
+  Really should print a message for success
+*/
 function _validate (func, elem, result) {
   const mess = result && `"${result}"`
   it(`Error ${mess} for: ${JSON.stringify(elem)}`, () => {
@@ -100,7 +104,6 @@ describe('validate/graph', () => {
       {type: 'Number', format: 'Int64'},
       {type: 'Number', format: 'Float32'},
       {type: 'Number', format: 'Float64'},
-      {type: 'NestedObject'},
       {type: 'NestedObject', propertySpecs: []},
       {type: 'LinkedClass', ref: 'hello'},
       {type: 'NestedObject', propertySpecs: [{ref: 'a'}]}
@@ -119,18 +122,18 @@ describe('validate/graph', () => {
       [{type: 'Class', label: 'a a'}, 'label "a a" can only have letters, numbers, or underscores'],
       [{type: 'Class', label: 'a', description: 3}, 'description must be a string'],
       [{type: 'Class', label: 'a', subClassOf: 3}, 'subClassOf must be a string'],
-      [{type: 'Class', label: 'a', propertySpecs: 'sdsd'}, 'propertySpecs[0].ref is required'],
+      [{type: 'Class', label: 'a', propertySpecs: 'sdsd'}, 'propertySpecs is required and must be an array'],
       [{type: 'Class', label: 'a', propertySpecs: [{ref: 'a', hello: 'ss'}]}, `propertySpecs.a.hello is invalid. Must be one of: ${SPEC_TYPES}`],
-      [{type: 'Class', label: 'a', excludeParentProperties: 2}, `excludeParentProperties should be an array`],
-      [{type: 'Class', label: 'a', excludeParentProperties: [2]}, `excludeParentProperties should be an array of strings`]
+      [{type: 'Class', label: 'a', propertySpecs: [], excludeParentProperties: 2}, `excludeParentProperties should be an array`],
+      [{type: 'Class', label: 'a', propertySpecs: [], excludeParentProperties: [2]}, `excludeParentProperties should be an array of strings`]
     ]
 
     const success = [
-      {type: 'Class', label: 'a'},
-      {type: 'Class', label: 'a', description: 'cool'},
+      {type: 'Class', label: 'a', propertySpecs: []},
+      {type: 'Class', label: 'a', propertySpecs: [], description: 'cool'},
       {type: 'Class', label: 'a', propertySpecs: []},
       {type: 'Class', label: 'a', propertySpecs: [{ref: 'b'}]},
-      {type: 'Class', label: 'a', excludeParentProperties: ['s']}
+      {type: 'Class', label: 'a', propertySpecs: [], excludeParentProperties: ['s']}
     ]
 
     fail.forEach(elems => _validate(validateClassNode, elems[0], elems[1]))
@@ -179,7 +182,7 @@ describe('validate/graph', () => {
         'Property.a.range is required'
       ],
       [
-        [{type: 'Class', label: 'a'}, {type: 'Class', label: 'A'}],
+        [{type: 'Class', propertySpecs: [], label: 'a'}, {type: 'Class', label: 'A', propertySpecs: []}],
         'Class.A.label "A" is declared more then once (label is case insensitive)'
       ],
       [
@@ -187,7 +190,7 @@ describe('validate/graph', () => {
         'Property.A.label "A" is declared more then once (label is case insensitive)'
       ],
       [
-        [{type: 'Class', label: 'a', subClassOf: 'b'}],
+        [{type: 'Class', label: 'a', propertySpecs: [], subClassOf: 'b'}],
         'Class.a.subClassOf "b" has not been declared as a Class'
       ],
       [
@@ -215,7 +218,7 @@ describe('validate/graph', () => {
         'Class.a.propertySpecs[0].ref u/user_a/design_a/master/class/class1 uid is not of type "PropertyUid"'
       ],
       [
-        [{type: 'Class', label: 'a', excludeParentProperties: ['at']}],
+        [{type: 'Class', label: 'a', propertySpecs: [], excludeParentProperties: ['at']}],
         '"at" has not been declared as a Property'
       ]
     ]
@@ -232,8 +235,8 @@ describe('validate/graph', () => {
       ],
       // SubClassOf
       [
-        {type: 'Class', label: 'A', subClassOf: 'B'},
-        {type: 'Class', label: 'B'}
+        {type: 'Class', label: 'A', propertySpecs: [], subClassOf: 'B'},
+        {type: 'Class', label: 'B', propertySpecs: [] }
       ],
       // LinkedClass
       [
