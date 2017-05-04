@@ -2,20 +2,155 @@ import isNumber from 'lodash/isNumber'
 import isArray from 'lodash/isArray'
 import isString from 'lodash/isString'
 import isBoolean from 'lodash/isBoolean'
-import * as constants from '../constants'
-import { validateNodeLabel } from './labels'
-import { validatePropertyUid, validateClassUid } from './uids'
-import { reduceUid } from '../utils'
+import isFinite from 'lodash/isFinite'
+import * as constants from './constants'
+import { getUidType, reduceUid } from './utils'
 
-/* Cardinality helpers */
-export function validateCardinality (cardinality) {
-  throw new Error('Deprecated: validateCardinality')
-}
+const LETTERS_NUMBERS_UNDERSCORE = /^[a-zA-Z0-9_]+$/
+const LETTERS_NUMBERS_UNDERSCORE_DASH = /^[a-zA-Z0-9_-]+$/
 
+/**
+ * @param {array}
+ * @param {array}
+ * @returns {string|null}
+ */
 function _ensureAllowedKeys (keys, allowed) {
   for (const key of keys) {
     if (!allowed.includes(key)) {
       return `${key} is invalid. Must be one of: ${allowed.join(', ')}`
+    }
+  }
+  return null
+}
+
+/**
+ * @param {string}
+ * @param {string}
+ * @returns {string|null}
+ */
+export function validateUid (uid, expectedType) {
+  let type
+  try {
+    type = getUidType(uid)
+  } catch (err) {
+    return err
+  }
+  if (expectedType && expectedType !== type) {
+    return `uid is not of type "${expectedType}"`
+  }
+  if (isString(type)) {
+    return null
+  }
+  return `Could not validate uid: ${uid}`
+}
+
+export function validateUserUid (uid) {
+  const err = validateUid(uid, constants.USER_UID)
+  return err || null
+}
+
+export function validateOrganizationUid (uid) {
+  const err = validateUid(uid, constants.ORGANIZATION_UID)
+  return err || null
+}
+
+export function validateDesignUid (uid) {
+  const err = validateUid(uid, constants.DESIGN_UID)
+  return err || null
+}
+
+export function validateVersionUid (uid) {
+  const err = validateUid(uid, constants.VERSION_UID)
+  return err || null
+}
+
+export function validateClassUid (uid) {
+  const err = validateUid(uid, constants.CLASS_UID)
+  return err || null
+}
+
+export function validatePropertyUid (uid) {
+  const err = validateUid(uid, constants.PROPERTY_UID)
+  return err || null
+}
+
+export function validateReducedUid (reduced) {
+  const {
+    ownerType,
+    userOrOrg,
+    designName,
+    versionLabel,
+    resourceType,
+    classOrProperty
+  } = reduced
+
+  if (ownerType !== 'u' && ownerType !== 'o') {
+    return 'Key ownerType must be "u" or "o"'
+  }
+  if (!userOrOrg) {
+    return 'Key userOrOrg must be provided'
+  }
+
+  if (designName) {
+    const designError = validateDesignLabel(designName)
+    if (designError) {
+      return designError
+    }
+    if (versionLabel) {
+      if (resourceType) {
+        if (resourceType !== 'class' && resourceType !== 'property') {
+          return 'Bad resourceType, must be "class" or "property"'
+        }
+        const nodeLabelError = validateNodeLabel(classOrProperty)
+        if (nodeLabelError) {
+          return nodeLabelError
+        }
+      }
+    }
+  }
+  return null
+}
+
+/**
+ * @param {string}
+ * @returns {string|null}
+ */
+export function validateDesignLabel (label) {
+  if (!isString(label) || !label.length) {
+    return 'Label must be a string'
+  }
+  if (!LETTERS_NUMBERS_UNDERSCORE_DASH.test(label)) {
+    return `label "${label}" can only have letters, numbers, underscores, or dashes`
+  }
+  return null
+}
+
+export function validateNodeLabel (label) {
+  if (!isString(label) || !label.length) {
+    return 'label must be a string'
+  }
+  if (!LETTERS_NUMBERS_UNDERSCORE.test(label)) {
+    return `label "${label}" can only have letters, numbers, or underscores`
+  }
+  return null
+}
+
+export function validateVersionLabel (label) {
+  if (!isString(label)) {
+    return 'Label must be a string'
+  }
+  if (label === 'master') {
+    return null
+  }
+
+  const split = label.split('.')
+  const ERROR_MESSAGE = 'Label should be of format *.*.*'
+  if (split.length !== 3) {
+    return ERROR_MESSAGE
+  }
+  for (const el of split) {
+    if (!isFinite(parseInt(el))) {
+      return ERROR_MESSAGE
     }
   }
   return null
