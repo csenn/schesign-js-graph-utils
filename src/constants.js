@@ -149,6 +149,8 @@ export const RANGE_FORMAT_MAPPING = {
 
 /* propertySpec contraints */
 export const SPEC_REF = 'ref'
+export const SPEC_REQUIRED = 'required'
+export const SPEC_ARRAY = 'array'
 export const SPEC_MIN_ITEMS = 'minItems'
 export const SPEC_MAX_ITEMS = 'maxItems'
 export const SPEC_INDEX = 'index'
@@ -157,6 +159,8 @@ export const SPEC_UNIQUE = 'unique'
 
 export const PROPERTY_SPEC_KEYS = [
   SPEC_REF,
+  SPEC_REQUIRED,
+  SPEC_ARRAY,
   SPEC_MIN_ITEMS,
   SPEC_MAX_ITEMS,
   SPEC_INDEX,

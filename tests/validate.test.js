@@ -27,7 +27,7 @@ function _validate (func, elem, error) {
   })
 }
 
-const SPEC_TYPES = 'ref, minItems, maxItems, index, primaryKey, unique'
+const SPEC_TYPES = 'ref, required, array, minItems, maxItems, index, primaryKey, unique'
 
 describe('validate', () => {
   describe('validateVersionLabel()', () => {
@@ -59,9 +59,13 @@ describe('validate', () => {
         [{}, 'ref is required'],
         [{ref: 1}, 'ref is required'],
         [{ref: 'one', hello: true}, `hello is invalid. Must be one of: ${SPEC_TYPES}`],
-        [{ref: 'one', minItems: '1'}, 'minItems must be a number'],
-        [{ref: 'one', maxItems: '1'}, 'maxItems must be a number or null'],
-        [{ref: 'one', maxItems: 'null'}, 'maxItems must be a number or null'],
+        [{ref: 'one', required: 'hello'}, `required must be a boolean`],
+        [{ref: 'one', array: 'hello'}, `array must be a boolean`],
+        [{ref: 'one', array: false, minItems: 0}, `minItems and maxItems are not valid with array=false`],
+        [{ref: 'one', array: false, maxItems: 0}, `minItems and maxItems are not valid with array=false`],
+        [{ref: 'one', array: true, minItems: 'hello'}, `minItems must be a number`],
+        [{ref: 'one', array: true, maxItems: 'hello'}, `maxItems must be a number`],
+        [{ref: 'one', array: true, maxItems: null}, `maxItems must be a number`],
         [{ref: 'one', primaryKey: null}, 'primaryKey must be boolean'],
         [{ref: 'one', unique: null}, 'unique must be boolean']
       ]
@@ -71,8 +75,12 @@ describe('validate', () => {
         {ref: 'u/user_a'},
         {ref: 'u/user_a/design_a/property/a'},
         {ref: 'u/user_a/design_a/class/a'},
-        {ref: 'label', minItems: 1, maxItems: 1},
-        {ref: 'label', minItems: 1, maxItems: null},
+        {ref: 'u/user_a/design_a/class/a', required: true},
+        {ref: 'u/user_a/design_a/class/a', required: false},
+        {ref: 'u/user_a/design_a/class/a', array: false},
+        {ref: 'u/user_a/design_a/class/a', array: true},
+        {ref: 'u/user_a/design_a/class/a', array: true, minItems: 1},
+        {ref: 'u/user_a/design_a/class/a', array: true, minItems: 1, maxItems: 100},
         {ref: 'label', primaryKey: true},
         {ref: 'label', primaryKey: false},
         {ref: 'label', unique: true},
@@ -85,7 +93,7 @@ describe('validate', () => {
     describe('validatePropertySpecs()', () => {
       const fail = [
       [ [{ref1: 'a'}], 'propertySpecs[0].ref is required' ],
-      [ [{ref: 'a', minItems: 'hello'}], 'propertySpecs[0].minItems must be a number' ],
+      [ [{ref: 'a', required: 'hello'}], 'propertySpecs[0].required must be a boolean' ],
       [ [{ref: 'a'}, {ref: 'a'}], 'propertySpecs[1] "a" was repeated' ],
       [ [{ref: 'a', primaryKey: true}, {ref: 'b', primaryKey: true}], `propertySpecs[1].primaryKey can't be declared. There can be only one primary key.`]
       ]
@@ -148,7 +156,7 @@ describe('validate', () => {
       [{type: 'Class', range: 'a'}, 'range is invalid. Must be one of: type, label, description, subClassOf, propertySpecs, excludeParentProperties'],
       [{type: 'Class'}, 'label must be a string'],
       [{type: 'Class', label: 'a a'}, 'label "a a" can only have letters, numbers, or underscores'],
-      [{type: 'Class', label: 'a', description: 3}, 'description must be null or a string'],
+      [{type: 'Class', label: 'a', description: 3}, 'description must be a string'],
       [{type: 'Class', label: 'a', subClassOf: 3}, 'subClassOf must be null or a string'],
       [{type: 'Class', label: 'a', propertySpecs: 'sdsd'}, 'propertySpecs is required and must be an array'],
       [{type: 'Class', label: 'a', propertySpecs: [{ref: 'a', hello: 'ss'}]}, `propertySpecs[0].hello is invalid. Must be one of: ${SPEC_TYPES}`],
@@ -159,7 +167,7 @@ describe('validate', () => {
       const success = [
       {type: 'Class', label: 'a', propertySpecs: []},
       {type: 'Class', label: 'a', propertySpecs: [], description: 'cool'},
-      {type: 'Class', label: 'a', propertySpecs: [], description: null},
+      {type: 'Class', label: 'a', propertySpecs: [], description: ''},
       {type: 'Class', label: 'a', propertySpecs: [], subClassOf: 'a'},
       {type: 'Class', label: 'a', propertySpecs: [], subClassOf: null},
       {type: 'Class', label: 'a', propertySpecs: [{ref: 'b'}]},
@@ -178,15 +186,14 @@ describe('validate', () => {
       [{type: 'Property'}, 'label must be a string'],
       [{type: 'Property', label: 'a a'}, 'label "a a" can only have letters, numbers, or underscores'],
       [{type: 'Property', label: 'hello'}, 'range is required'],
-      [{type: 'Property', label: 'a', description: 3}, 'description must be null or a string'],
+      [{type: 'Property', label: 'a', description: 3}, 'description must be a string'],
       [{type: 'Property', label: 'a', range: 4}, 'type is required']
       ]
 
       const success = [
       {type: 'Property', label: 'a', range: {type: 'Text'}},
       {type: 'Property', label: 'a', description: 'hello', range: {type: 'Text'}},
-      {type: 'Property', label: 'a', description: null, range: {type: 'Text'}},
-      {type: 'Property', label: 'a', range: {type: 'Text'}, description: 'cool'}
+      {type: 'Property', label: 'a', description: '', range: {type: 'Text'}}
       ]
 
       fail.forEach(elems => _validate(validatePropertyNode, elems[0], elems[1]))

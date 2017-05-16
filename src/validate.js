@@ -167,12 +167,34 @@ export function validatePropertySpec (propertySpec) {
   const err = _ensureAllowedKeys(Object.keys(propertySpec), constants.PROPERTY_SPEC_KEYS)
   if (err) return err
 
-  if ('minItems' in propertySpec && !isNumber(propertySpec.minItems)) {
-    return 'minItems must be a number'
+  if ('required' in propertySpec && !isBoolean(propertySpec.required)) {
+    return 'required must be a boolean'
   }
-  if ('maxItems' in propertySpec && !isNumber(propertySpec.maxItems) && propertySpec.maxItems !== null) {
-    return 'maxItems must be a number or null'
+
+  if ('array' in propertySpec) {
+    if (!isBoolean(propertySpec.array)) {
+      return 'array must be a boolean'
+    }
+
+    if (propertySpec.array === false && ('minItems' in propertySpec || 'maxItems' in propertySpec)) {
+      return 'minItems and maxItems are not valid with array=false'
+    }
+
+    if ('minItems' in propertySpec && !isNumber(propertySpec.minItems)) {
+      return 'minItems must be a number'
+    }
+    if ('maxItems' in propertySpec && !isNumber(propertySpec.maxItems)) {
+      return 'maxItems must be a number'
+    }
+  } else {
+    if ('minItems' in propertySpec) {
+      return 'minItems is not valid without array = true'
+    }
+    if ('maxItems' in propertySpec) {
+      return 'maxItems is not valid without array = true'
+    }
   }
+
   if ('primaryKey' in propertySpec && !isBoolean(propertySpec.primaryKey)) {
     return 'primaryKey must be boolean'
   }
@@ -277,8 +299,8 @@ function _validateNode (node) {
   if (err) {
     return err
   }
-  if ('description' in node && node.description !== null && !isString(node.description)) {
-    return 'description must be null or a string'
+  if ('description' in node && !isString(node.description)) {
+    return 'description must be a string'
   }
   return null
 }
