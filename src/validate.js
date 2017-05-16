@@ -1,4 +1,5 @@
 import isNumber from 'lodash/isNumber'
+import isInteger from 'lodash/isInteger'
 import isArray from 'lodash/isArray'
 import isString from 'lodash/isString'
 import isBoolean from 'lodash/isBoolean'
@@ -179,12 +180,11 @@ export function validatePropertySpec (propertySpec) {
     if (propertySpec.array === false && ('minItems' in propertySpec || 'maxItems' in propertySpec)) {
       return 'minItems and maxItems are not valid with array=false'
     }
-
-    if ('minItems' in propertySpec && !isNumber(propertySpec.minItems)) {
-      return 'minItems must be a number'
+    if ('minItems' in propertySpec && (!isInteger(propertySpec.minItems) || propertySpec.minItems < 0)) {
+      return 'minItems must be a number greater then 0'
     }
-    if ('maxItems' in propertySpec && !isNumber(propertySpec.maxItems)) {
-      return 'maxItems must be a number'
+    if ('maxItems' in propertySpec && (!isInteger(propertySpec.maxItems) || propertySpec.maxItems < 0)) {
+      return 'maxItems must be a number greater then 0'
     }
   } else {
     if ('minItems' in propertySpec) {

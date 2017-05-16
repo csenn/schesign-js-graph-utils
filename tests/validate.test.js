@@ -63,9 +63,13 @@ describe('validate', () => {
         [{ref: 'one', array: 'hello'}, `array must be a boolean`],
         [{ref: 'one', array: false, minItems: 0}, `minItems and maxItems are not valid with array=false`],
         [{ref: 'one', array: false, maxItems: 0}, `minItems and maxItems are not valid with array=false`],
-        [{ref: 'one', array: true, minItems: 'hello'}, `minItems must be a number`],
-        [{ref: 'one', array: true, maxItems: 'hello'}, `maxItems must be a number`],
-        [{ref: 'one', array: true, maxItems: null}, `maxItems must be a number`],
+        [{ref: 'one', array: true, minItems: -1}, `minItems must be a number greater then 0`],
+        [{ref: 'one', array: true, maxItems: -1}, `maxItems must be a number greater then 0`],
+        [{ref: 'one', array: true, minItems: 0.5}, `minItems must be a number greater then 0`],
+        [{ref: 'one', array: true, maxItems: 1.5}, `maxItems must be a number greater then 0`],
+        [{ref: 'one', array: true, minItems: 'hello'}, `minItems must be a number greater then 0`],
+        [{ref: 'one', array: true, maxItems: 'hello'}, `maxItems must be a number greater then 0`],
+        [{ref: 'one', array: true, maxItems: null}, `maxItems must be a number greater then 0`],
         [{ref: 'one', primaryKey: null}, 'primaryKey must be boolean'],
         [{ref: 'one', unique: null}, 'unique must be boolean']
       ]
