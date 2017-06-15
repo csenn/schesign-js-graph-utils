@@ -19,7 +19,7 @@ export function printDesign (design, opts = {}) {
   function printRange (range) {
     let str = ' ' + colors.cyan(range.type) + ' '
     Object.keys(range).forEach(key => {
-      if (['type', 'propertyRefs'].includes(key)) {
+      if (['type', 'propertySpecs'].includes(key)) {
         return
       }
       str += colors.magenta(key) + ':' + range[key] + ' '
@@ -28,9 +28,9 @@ export function printDesign (design, opts = {}) {
   }
 
   /* Prevent recursion for NestedObjects that point to themselves in a chain */
-  function printPropertyRefs (propertyRefs, level, didRender) {
-    propertyRefs.forEach(propertyRef => {
-      const property = propertyMap[propertyRef.ref]
+  function printPropertyRefs (propertySpecs, level, didRender) {
+    propertySpecs.forEach(propertySpec => {
+      const property = propertyMap[propertySpec.ref]
       if (didRender[property.label]) {
         return
       }
@@ -41,12 +41,12 @@ export function printDesign (design, opts = {}) {
       }
       str += property.label
       str += printRange(property.range)
-      str += colors.green('min:') + propertyRef.cardinality.minItems + ' '
-      str += colors.green('max:') + propertyRef.cardinality.maxItems + ' '
+      str += colors.green('min:') + propertySpec.minItems + ' '
+      str += colors.green('max:') + propertySpec.maxItems + ' '
 
       console.log(str)
       if (property.range.type === NESTED_OBJECT) {
-        printPropertyRefs(property.range.propertyRefs, level + 1, didRender)
+        printPropertyRefs(property.range.propertySpecs, level + 1, didRender)
       }
     })
   }
@@ -61,7 +61,7 @@ export function printDesign (design, opts = {}) {
       classLabel += ' inherits from ' + colors.magenta(classNode.subClassOf)
     }
     console.log(classLabel)
-    printPropertyRefs(classNode.propertyRefs, 1, {})
+    printPropertyRefs(classNode.propertySpecs, 1, {})
     console.log('')
   })
 

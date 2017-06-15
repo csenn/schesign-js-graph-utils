@@ -96,10 +96,10 @@ describe('validate', () => {
     })
     describe('validatePropertySpecs()', () => {
       const fail = [
-      [ [{ref1: 'a'}], 'propertySpecs[0].ref is required' ],
-      [ [{ref: 'a', required: 'hello'}], 'propertySpecs[0].required must be a boolean' ],
-      [ [{ref: 'a'}, {ref: 'a'}], 'propertySpecs[1] "a" was repeated' ],
-      [ [{ref: 'a', primaryKey: true}, {ref: 'b', primaryKey: true}], `propertySpecs[1].primaryKey can't be declared. There can be only one primary key.`]
+      [[{ref1: 'a'}], 'propertySpecs[0].ref is required'],
+      [[{ref: 'a', required: 'hello'}], 'propertySpecs[0].required must be a boolean'],
+      [[{ref: 'a'}, {ref: 'a'}], 'propertySpecs[1] "a" was repeated'],
+      [[{ref: 'a', primaryKey: true}, {ref: 'b', primaryKey: true}], `propertySpecs[1].primaryKey can't be declared. There can be only one primary key.`]
       ]
       const success = [
       [],
@@ -165,7 +165,9 @@ describe('validate', () => {
       [{type: 'Class', label: 'a', propertySpecs: 'sdsd'}, 'propertySpecs is required and must be an array'],
       [{type: 'Class', label: 'a', propertySpecs: [{ref: 'a', hello: 'ss'}]}, `propertySpecs[0].hello is invalid. Must be one of: ${SPEC_TYPES}`],
       [{type: 'Class', label: 'a', propertySpecs: [], excludeParentProperties: 2}, `excludeParentProperties should be an array`],
-      [{type: 'Class', label: 'a', propertySpecs: [], excludeParentProperties: [2]}, `excludeParentProperties should be an array of strings`]
+      [{type: 'Class', label: 'a', propertySpecs: [], excludeParentProperties: [2]}, `excludeParentProperties should be an array of strings`],
+      [{type: 'Class', uid: 'hello'}, `import node must only have keys "type" and "uid"`],
+      [{type: 'Class', uid: 'hellon/one', propertySpecs: []}, `import node must only have keys "type" and "uid"`]
       ]
 
       const success = [
@@ -175,7 +177,8 @@ describe('validate', () => {
       {type: 'Class', label: 'a', propertySpecs: [], subClassOf: 'a'},
       {type: 'Class', label: 'a', propertySpecs: [], subClassOf: null},
       {type: 'Class', label: 'a', propertySpecs: [{ref: 'b'}]},
-      {type: 'Class', label: 'a', propertySpecs: [], excludeParentProperties: ['s']}
+      {type: 'Class', label: 'a', propertySpecs: [], excludeParentProperties: ['s']},
+      {type: 'Class', uid: 'u/user_a/design_a/property/prop_a'}
       ]
 
       fail.forEach(elems => _validate(validateClassNode, elems[0], elems[1]))
@@ -191,7 +194,9 @@ describe('validate', () => {
       [{type: 'Property', label: 'a a'}, 'label "a a" can only have letters, numbers, or underscores'],
       [{type: 'Property', label: 'hello'}, 'range is required'],
       [{type: 'Property', label: 'a', description: 3}, 'description must be a string'],
-      [{type: 'Property', label: 'a', range: 4}, 'type is required']
+      [{type: 'Property', label: 'a', range: 4}, 'type is required'],
+      [{type: 'Property', label: 'a', uid: 'hello'}, `import node must only have keys "type" and "uid"`],
+      [{type: 'Property', uid: 'hellon'}, `import node must only have keys "type" and "uid"`]
       ]
 
       const success = [

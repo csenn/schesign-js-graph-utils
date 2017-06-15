@@ -21,7 +21,7 @@ function cleanObject (obj) {
   return next
 }
 
-function getPropertyRef (propertyOrId, opts = {}) {
+function getPropertySpec (propertyOrId, opts = {}) {
   if (!(propertyOrId instanceof PropertyNode) && !isString(propertyOrId)) {
     throw new Error('Must be an instanceof PropertyNode or a property uid')
   }
@@ -31,26 +31,27 @@ function getPropertyRef (propertyOrId, opts = {}) {
     : propertyOrId
 
   /* Use either the uid or label */
-  const propertyRef = { ref, cardinality: { minItems: 0, maxItems: 1 } }
+  const propertySpec = { ref }
 
   /* If cardinality is provided, it overwrites required or isMultiple */
-  if ('cardinality' in opts) {
-    propertyRef.cardinality = opts.cardinality
-  } else {
-    if ('required' in opts) {
-      propertyRef.cardinality.minItems = 1
-    }
-    if ('isMultiple' in opts) {
-      propertyRef.cardinality.maxItems = null
-    }
+  // if ('cardinality' in opts) {
+  //   propertySpec.cardinality = opts.cardinality
+  // } else {
+  // }
+
+  if ('required' in opts) {
+    propertySpec.required = true
+  }
+  if ('isMultiple' in opts) {
+    propertySpec.array = true
   }
 
-  const err = validateCardinality(propertyRef.cardinality)
-  if (err) {
-    throw new Error(`Cardinality error for property ref ${ref}: ${err}`)
-  }
+  // const err = validateCardinality(propertySpec.cardinality)
+  // if (err) {
+  //   throw new Error(`Cardinality error for property ref ${ref}: ${err}`)
+  // }
 
-  return propertyRef
+  return propertySpec
 }
 
 export class Node {
@@ -81,7 +82,7 @@ export class PropertyNode extends Node {
 
   setRange (range) {
     const nextRange = range && range.type === NESTED_OBJECT
-      ? Object.assign({}, range, { propertyRefs: [] })
+      ? Object.assign({}, range, { propertySpecs: [] })
       : range
 
     const err = validateRange(nextRange, { skipUidValidation: true })
@@ -96,13 +97,13 @@ export class PropertyNode extends Node {
       throw new Error('Must have range NestedObject to add property ref')
     }
 
-    const propertyRef = getPropertyRef(propertyOrRef, opts)
-    const { ref } = propertyRef
+    const propertySpec = getPropertySpec(propertyOrRef, opts)
+    const { ref } = propertySpec
     if (this.propertyLookup[ref]) {
       throw new Error(`Property has already been added to NestedObject: ${this.label}`)
     }
 
-    this.range.propertyRefs.push(propertyRef)
+    this.range.propertySpecs.push(propertySpec)
 
     if (propertyOrRef instanceof PropertyNode) {
       this.propertyLookup[ref] = propertyOrRef
@@ -127,18 +128,18 @@ export class ClassNode extends Node {
       this.inheritsFrom(opts.subClassOf)
     }
 
-    this.propertyRefs = []
+    this.propertySpecs = []
     this.propertyLookup = {}
     this.excludeParentProperties = []
   }
 
   addProperty (propertyOrRef, opts) {
-    const propertyRef = getPropertyRef(propertyOrRef, opts)
-    const { ref } = propertyRef
+    const propertySpec = getPropertySpec(propertyOrRef, opts)
+    const { ref } = propertySpec
     if (this.propertyLookup[ref]) {
       throw new Error('Property has already been added to class')
     }
-    this.propertyRefs.push(propertyRef)
+    this.propertySpecs.push(propertySpec)
     if (propertyOrRef instanceof PropertyNode) {
       this.propertyLookup[ref] = propertyOrRef
     }
@@ -166,7 +167,7 @@ export class ClassNode extends Node {
       label: this.label,
       description: this.description,
       subClassOf: this.subClassOf,
-      propertyRefs: this.propertyRefs,
+      propertySpecs: this.propertySpecs,
       excludeParentProperties: this.excludeParentProperties.length
         ? this.excludeParentProperties
         : null

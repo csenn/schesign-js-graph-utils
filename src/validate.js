@@ -85,8 +85,8 @@ export function validateReducedUid (reduced) {
     classOrProperty
   } = reduced
 
-  if (ownerType !== 'u' && ownerType !== 'o') {
-    return 'Key ownerType must be "u" or "o"'
+  if (ownerType !== 'u' && ownerType !== 'o' && ownerType !== 'd') {
+    return 'Key ownerType must be "u", "o", "d"'
   }
   if (!userOrOrg) {
     return 'Key userOrOrg must be provided'
@@ -305,12 +305,30 @@ function _validateNode (node) {
   return null
 }
 
+function _isImportNode (node) {
+  return isString(node.uid)
+}
+
+function _validateImportNode (node) {
+  if (Object.keys(node).length === 2 && isString(node.uid) && node.uid.indexOf('/') > -1) {
+    return null
+  }
+  return 'import node must only have keys "type" and "uid"'
+}
+
 export function validatePropertyNode (propertyNode, opts = {}) {
   if (propertyNode.type !== 'Property') {
     return 'type must be "Property"'
   }
 
-  let err = _ensureAllowedKeys(Object.keys(propertyNode), constants.VALID_PROPERTY_KEYS)
+  let err
+  if (_isImportNode(propertyNode)) {
+    err = _validateImportNode(propertyNode)
+    if (err) return err
+    else return null
+  }
+
+  err = _ensureAllowedKeys(Object.keys(propertyNode), constants.VALID_PROPERTY_KEYS)
   if (err) return err
 
   err = _validateNode(propertyNode)
@@ -331,7 +349,14 @@ export function validateClassNode (classNode, opts = {}) {
     return 'type must be "Class"'
   }
 
-  let err = _ensureAllowedKeys(Object.keys(classNode), constants.VALID_CLASS_KEYS)
+  let err
+  if (_isImportNode(classNode)) {
+    err = _validateImportNode(classNode)
+    if (err) return err
+    else return null
+  }
+
+  err = _ensureAllowedKeys(Object.keys(classNode), constants.VALID_CLASS_KEYS)
   if (err) {
     return err
   }
@@ -394,6 +419,11 @@ function _checkPropertySpecs (context, propertySpecs) {
 function _checkRefsInProperties (context) {
   for (const key of Object.keys(context.properties)) {
     const propertyNode = context.properties[key]
+
+    if (_isImportNode(propertyNode)) {
+      return null
+    }
+
     const location = `Property.${propertyNode.label}.`
 
     if (propertyNode.range.type === 'LinkedClass') {
@@ -413,6 +443,11 @@ function _checkRefsInProperties (context) {
 function _checkRefsInClasses (context) {
   for (const key of Object.keys(context.classes)) {
     const classNode = context.classes[key]
+
+    if (_isImportNode(classNode)) {
+      return null
+    }
+
     const location = `Class.${classNode.label}.`
 
     let err = _checkPropertySpecs(context, classNode.propertySpecs)

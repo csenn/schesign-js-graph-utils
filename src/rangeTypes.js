@@ -3,8 +3,8 @@ import * as constants from './constants'
 import { ClassNode, getRefFromNode } from './design'
 
 // const rangeTypes = {
-export const nestedObject = (propertyRefs = []) =>
-  ({ type: constants.NESTED_OBJECT, propertyRefs })
+export const nestedObject = (propertySpecs = []) =>
+  ({ type: constants.NESTED_OBJECT, propertySpecs })
 
 export const linkedClass = (nodeOrRef) => {
   const ref = nodeOrRef instanceof ClassNode
